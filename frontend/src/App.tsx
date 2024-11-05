@@ -22,25 +22,22 @@ import { AuthContext } from "./context/AuthContext";
 function OAuthCallback() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login } = useContext(AuthContext);
+  const { login, userRole } = useContext(AuthContext);
 
   useEffect(() => {
     const token = searchParams.get("token");
-    console.log("Received token:", token); // 调试用
+    console.log("Received token:", token);
 
     if (token) {
-      // 保存 token
       localStorage.setItem("token", token);
-      // 更新登录状态
       login();
-      // 延迟导航，确保状态更新
       setTimeout(() => {
-        navigate("/application");
-      }, 100);
+        navigate(userRole === "staff" ? "/admin" : "/movies");
+      }, 1000);
     } else {
       navigate("/login");
     }
-  }, [searchParams, login, navigate]);
+  }, [searchParams, login, navigate, userRole]);
 
   return (
     <Box

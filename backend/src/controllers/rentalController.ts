@@ -90,3 +90,55 @@ export const getRentalHistory = async (
     });
   }
 };
+
+export const getAllRentals = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const rentals = await Rental.find()
+      .populate("movieId")
+      .populate("userId", "email")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      status: "success",
+      data: rentals,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "error",
+      message: "Failed to get all rentals",
+    });
+  }
+};
+
+export const updateRentalStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { rentalId, status } = req.body;
+    const rental = await Rental.findById(rentalId)
+      .populate("userId")
+      .populate("movieId");
+
+    if (!rental) {
+      res.status(404).json({ error: "Rental not found" });
+      return;
+    }
+
+    rental.status = status;
+    await rental.save();
+
+    res.json({
+      status: "success",
+      data: rental,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "error",
+      message: "Failed to update rental status",
+    });
+  }
+};
