@@ -51,7 +51,6 @@ export const login: AsyncRequestHandler = async (req, res) => {
         return;
       }
     }
-
     const token = jwt.sign(
       {
         id: user._id,
@@ -88,47 +87,39 @@ export const googleCallback = async (req: Request, res: Response) => {
     const { tokens } = await oauth2Client.getToken(code as string);
     oauth2Client.setCredentials(tokens);
 
-    // 获取用户信息
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
     const userInfo = await oauth2.userinfo.get();
 
-    // 确保必要的数据存在
     if (!userInfo.data.id || !userInfo.data.email) {
       throw new Error("Missing required user information");
     }
 
-    // 先尝试通过 googleId 查找用户
     let user = await User.findOne({ googleId: userInfo.data.id });
 
     if (!user) {
-      // 如果没找到，再尝试通过 email 查找
       user = await User.findOne({ email: userInfo.data.email });
 
       if (user) {
-        // 如果找到了用户，更新其 googleId
         user.googleId = userInfo.data.id;
         await user.save();
       } else {
-        // 如果用户完全不存在，才创建新用户
         const username =
           userInfo.data.name || userInfo.data.email.split("@")[0];
         user = await User.create({
           googleId: userInfo.data.id,
           email: userInfo.data.email,
           username,
-          role: "public", // 设置默认角色
+          role: "public",
         });
       }
     }
 
-    // 生成JWT
     const token = jwt.sign(
       { id: user._id, role: user.role },
       process.env.JWT_SECRET || "12345678",
       { expiresIn: "1h" }
     );
 
-    // 重定向到前端，带上token
     res.redirect(`http://localhost:3000/auth/success?token=${token}`);
   } catch (error) {
     console.error("Google auth error:", error);

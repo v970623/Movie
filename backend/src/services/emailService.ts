@@ -40,14 +40,15 @@ const getEmailTemplate = (type: string, data: any) => {
           <p>Submission Time: ${new Date().toLocaleString()}</p>
         `,
       };
-    case "status_update":
+    case "rental_confirmation":
       return {
-        subject: "Application Status Update",
+        subject: "Movie Rental Confirmation",
         html: `
-          <h2>Your Application Status Has Been Updated</h2>
-          <p>Title: ${data.title}</p>
-          <p>New Status: ${data.status}</p>
-          <p>Update Time: ${new Date().toLocaleString()}</p>
+          <h2>Your Movie Rental Confirmation</h2>
+          <p>Movie: ${data.movieTitle}</p>
+          <p>Start Date: ${new Date(data.startDate).toLocaleDateString()}</p>
+          <p>End Date: ${new Date(data.endDate).toLocaleDateString()}</p>
+          <p>Total Price: $${data.totalPrice.toFixed(2)}</p>
         `,
       };
     default:
@@ -72,7 +73,7 @@ export const sendEmailNotification = async (
         throw new Error("Admin email not configured");
       }
       recipient = adminEmail;
-    } else if (type === "status_update" && data.userId?.email) {
+    } else if (type === "rental_confirmation" && data.userId?.email) {
       recipient = data.userId.email;
     } else {
       throw new Error("Invalid email type or missing recipient information");

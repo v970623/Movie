@@ -2,8 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
-import applicationRoutes from "./routes/applicationRoutes";
-import messageRoutes from "./routes/messageRoutes";
+import movieRoutes from "./routes/movieRoutes";
+import rentalRoutes from "./routes/rentalRoutes";
 import path from "path";
 import fs from "fs";
 import passport from "passport";
@@ -30,13 +30,11 @@ app.use(
 );
 
 app.options("*", cors());
-
-// 初始化 Passport
 app.use(passport.initialize());
 configurePassport();
 
 mongoose
-  .connect("mongodb://localhost:27017/assessment")
+  .connect("mongodb://localhost:27017/movie")
   .then(() => {
     console.log("Database connected successfully");
   })
@@ -47,8 +45,8 @@ mongoose
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
-app.use("/api/application", applicationRoutes);
-app.use("/api/message", messageRoutes);
+app.use("/api/movies", movieRoutes);
+app.use("/api/rentals", rentalRoutes);
 
 const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {

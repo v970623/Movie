@@ -1,0 +1,92 @@
+import { Request, Response } from "express";
+import Rental from "../models/rentalModel";
+import Movie from "../models/movieModel";
+
+export const createRental = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { movieId, startDate, endDate } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ error: "User not authenticated" });
+      return;
+    }
+
+    const movie = await Movie.findById(movieId);
+    if (!movie || movie.status === "unavailable") {
+      res.status(400).json({ error: "Movie is not available" });
+      return;
+    }
+
+    const days = Math.ceil(
+      (new Date(endDate).getTime() - new Date(startDate).getTime()) /
+        (1000 * 3600 * 24)
+    );
+    const totalPrice = days * movie.price;
+
+    const rental = await Rental.create({
+      userId,
+      movieId,
+      startDate,
+      endDate,
+      totalPrice,
+      status: "new",
+    });
+
+    res.status(201).json({
+      status: "success",
+      data: rental,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "error",
+      message: "Failed to create rental",
+    });
+  }
+};
+
+export const getRentals = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const rentals = await Rental.find({ userId: req.user?.id })
+      .populate("movieId")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      status: "success",
+      data: rentals,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "error",
+      message: "Failed to get rentals",
+    });
+  }
+};
+
+export const getRentalHistory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    const rentals = await Rental.find({ userId })
+      .populate("movieId")
+      .sort({ createdAt: -1 });
+
+    res.json({
+      status: "success",
+      data: rentals,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "error",
+      message: "Failed to get rental history",
+    });
+  }
+};
