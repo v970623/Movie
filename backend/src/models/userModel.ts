@@ -1,16 +1,14 @@
 import { Schema, model, Document } from "mongoose";
 import bcrypt from "bcrypt";
+import { IUser } from "../types/user";
 
-export interface IUser extends Document {
-  username: string;
+interface IUserDocument extends IUser, Document {
   password?: string;
   googleId?: string;
-  email: string;
-  role: "staff" | "public";
   comparePassword(password: string): Promise<boolean>;
 }
 
-const userSchema = new Schema<IUser>({
+const userSchema = new Schema<IUserDocument>({
   username: { type: String, required: true, unique: true },
   password: { type: String },
   email: { type: String, required: true, unique: true },
@@ -34,4 +32,4 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-export default model<IUser>("User", userSchema);
+export default model<IUserDocument>("User", userSchema);
