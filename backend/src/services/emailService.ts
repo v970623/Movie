@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { IUser } from "../models/userModel";
+import User from "../models/userModel";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -61,7 +61,7 @@ const getEmailTemplate = (type: string, data: any) => {
 
 export const sendEmailNotification = async (
   type: string,
-  data: { userId?: IUser } & Record<string, any>
+  data: { userId?: string } & Record<string, any>
 ) => {
   try {
     const template = getEmailTemplate(type, data);
@@ -73,8 +73,12 @@ export const sendEmailNotification = async (
         throw new Error("Admin email not configured");
       }
       recipient = adminEmail;
-    } else if (type === "rental_confirmation" && data.userId?.email) {
-      recipient = data.userId.email;
+    } else if (type === "rental_confirmation" && data.userId) {
+      const user = await User.findById(data.userId);
+      if (!user?.email) {
+        throw new Error("User email not found");
+      }
+      recipient = user.email;
     } else {
       throw new Error("Invalid email type or missing recipient information");
     }

@@ -1,5 +1,5 @@
 import express from "express";
-import { authenticate, isStaff } from "../middleware/authMiddleware";
+import { authenticate, isStaff } from "../controllers/rentalController";
 import {
   createRental,
   getRentals,
