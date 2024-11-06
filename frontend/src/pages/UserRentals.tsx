@@ -19,7 +19,7 @@ const UserRentals = () => {
     const fetchRentals = async () => {
       try {
         const response = await rentalApi.getRentals();
-        setRentals(response.data);
+        setRentals(response.data.data || []);
       } catch (error) {
         console.error("Failed to fetch rentals:", error);
       }
@@ -57,7 +57,9 @@ const UserRentals = () => {
                 <Chip
                   label={rental.status}
                   color={
-                    rental.status === "approved"
+                    rental.status === "pending"
+                      ? "warning"
+                      : rental.status === "accepted" || rental.status === "new"
                       ? "success"
                       : rental.status === "rejected"
                       ? "error"

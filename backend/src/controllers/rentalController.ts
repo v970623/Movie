@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { IUser } from "../types/user";
-import { Document } from "mongoose";
 import Rental from "../models/rentalModel";
 import Movie from "../models/movieModel";
 import { sendEmailNotification } from "../services/emailService";
@@ -68,8 +67,19 @@ export const createRental = async (
 
     const startDate = new Date(req.body.startDate);
     const endDate = new Date(req.body.endDate);
-    const rentalDays =
+
+    if (endDate < startDate) {
+      res.status(400).json({ error: "End date must not be before start date" });
+      return;
+    }
+
+    let rentalDays =
       (endDate.getTime() - startDate.getTime()) / (1000 * 3600 * 24);
+
+    if (rentalDays < 1) {
+      rentalDays = 1;
+    }
+
     const totalPrice = rentalDays * movie.price;
 
     const rental = await Rental.create({
@@ -101,7 +111,6 @@ export const createRental = async (
     });
   }
 };
-
 export const getRentals = async (
   req: Request,
   res: Response

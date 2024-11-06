@@ -14,9 +14,13 @@ import MovieList from "./pages/MovieList";
 import MovieDetail from "./pages/MovieDetail";
 import RentalList from "./pages/admin/RentalList";
 import UserRentals from "./pages/UserRentals";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { ThemeProvider } from "@mui/material/styles";
+import { theme } from "./theme";
 
 function OAuthCallback() {
   const navigate = useNavigate();
@@ -54,60 +58,69 @@ function OAuthCallback() {
 
 function App() {
   return (
-    <AuthProvider>
-      <BrowserRouter>
-        <CssBaseline />
-        <Box
-          sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
-        >
-          <Navbar />
-          <Box component="main" sx={{ flexGrow: 1, pt: "64px" }}>
-            <Routes>
-              <Route path="/login" element={<LoginPage />} />
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
+        <BrowserRouter>
+          <CssBaseline />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: "100vh",
+            }}
+          >
+            <Navbar />
+            <Box component="main" sx={{ flexGrow: 1, pt: "64px" }}>
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
 
-              <Route
-                path="/movies"
-                element={
-                  <ProtectedRoute>
-                    <MovieList />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/movies"
+                  element={
+                    <ProtectedRoute>
+                      <MovieList />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/movies/:id"
-                element={
-                  <ProtectedRoute>
-                    <MovieDetail />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/movies/:id"
+                  element={
+                    <ProtectedRoute>
+                      <MovieDetail />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/admin/rentals"
-                element={
-                  <ProtectedRoute requireRole="staff">
-                    <RentalList />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/admin/rentals"
+                  element={
+                    <ProtectedRoute requireRole="staff">
+                      <RentalList />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/my-rentals"
-                element={
-                  <ProtectedRoute>
-                    <UserRentals />
-                  </ProtectedRoute>
-                }
-              />
+                <Route
+                  path="/my-rentals"
+                  element={
+                    <ProtectedRoute>
+                      <UserRentals />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="/" element={<Navigate to="/movies" replace />} />
-              <Route path="/auth/success" element={<OAuthCallback />} />
-            </Routes>
+                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
+
+                <Route path="/" element={<Navigate to="/movies" replace />} />
+                <Route path="/auth/success" element={<OAuthCallback />} />
+              </Routes>
+            </Box>
           </Box>
-        </Box>
-      </BrowserRouter>
-    </AuthProvider>
+        </BrowserRouter>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 

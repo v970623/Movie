@@ -12,15 +12,8 @@
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
-        background-color: #f5f5f5;
+        background-color: #f9f9f9;
         color: #333;
-      }
-
-      .container {
-        background-color: white;
-        padding: 40px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
       }
 
       h1 {
@@ -47,7 +40,6 @@
       .important {
         background-color: rgba(0, 0, 0, 0.02);
         padding: 20px;
-        border-radius: 8px;
         border-left: 3px solid #666;
         margin: 20px 0;
       }
@@ -62,13 +54,24 @@
         margin: 0;
       }
 
+      .back-button {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 10px 20px;
+        background-color: #333;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      .back-button:hover {
+        background-color: #555;
+      }
+
       @media (max-width: 768px) {
         body {
           padding: 15px;
-        }
-
-        .container {
-          padding: 25px;
         }
 
         h1 {
@@ -81,110 +84,100 @@
         }
       }
 
-      html {
-        scroll-behavior: smooth;
-      }
-
       ::selection {
         background-color: rgba(0, 0, 0, 0.1);
         color: #333;
       }
-
-      .section p {
-        max-width: 70ch;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      @media print {
-        body {
-          background-color: white;
-        }
-
-        .container {
-          box-shadow: none;
-          padding: 0;
-        }
-
-        .important {
-          border: 1px solid #666;
-          break-inside: avoid;
-        }
-      }
     </style>
   </head>
   <body>
-    <div class="container">
-      <h1>Terms of Service</h1>
+    <a href="javascript:history.back()" class="back-button">Back</a>
+    <h1>Terms of Service</h1>
 
-      <div class="section">
-        <h2>1. License</h2>
+    <div class="section">
+      <h2>1. License</h2>
+      <p>
+        We grant you a limited, non-exclusive, non-transferable license to use
+        our digital movie rental service in accordance with these Terms of
+        Service. You may not reverse engineer, decompile, disassemble, or
+        otherwise attempt to derive the source code of the service.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>2. User Code of Conduct</h2>
+      <p>
+        You agree to comply with all applicable laws and regulations while using
+        our service. You must not post, transmit, or store any content that is
+        illegal, obscene, defamatory, threatening, harassing, or infringes on
+        the rights of others.
+      </p>
+      <div class="important">
         <p>
-          We grant you a limited, non-exclusive, non-transferable license to use
-          our application in accordance with these Terms of Service. You may not
-          reverse engineer, decompile, disassemble, or otherwise attempt to
-          derive the source code of the application.
+          You are responsible for your account and behavior within the service.
+          Please notify us immediately if you discover any unauthorized use of
+          your account.
         </p>
       </div>
+    </div>
 
-      <div class="section">
-        <h2>2. User Code of Conduct</h2>
+    <div class="section">
+      <h2>3. Rental Terms</h2>
+      <p>
+        Movies rented through our service are available for a limited time
+        period as specified at the time of rental. You agree not to copy,
+        distribute, or share rented movies with others.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>4. Payment and Refunds</h2>
+      <p>
+        All payments for movie rentals are non-refundable. In case of any issues
+        with the rental, please contact our support team for assistance.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>5. Changes and Termination</h2>
+      <p>
+        We reserve the right to modify, suspend, or terminate the service at any
+        time without liability to you or any third party. When changing or
+        terminating the service, we will take reasonable steps to protect your
+        personal information but are not liable for any losses resulting from
+        such changes or termination.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>6. Disclaimer</h2>
+      <div class="important">
         <p>
-          You agree to comply with all applicable laws and regulations while
-          using our application. You must not post, transmit, or store any
-          content that is illegal, obscene, defamatory, threatening, harassing,
-          or infringes on the rights of others.
-        </p>
-        <div class="important">
-          <p>
-            You are responsible for your account and behavior within the
-            application. Please notify us immediately if you discover any
-            unauthorized use of your account.
-          </p>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>3. Changes and Termination</h2>
-        <p>
-          We reserve the right to modify, suspend, or terminate the application
-          at any time without liability to you or any third party. When changing
-          or terminating the application, we will take reasonable steps to
-          protect your personal information but are not liable for any losses
-          resulting from such changes or termination.
-        </p>
-      </div>
-
-      <div class="section">
-        <h2>4. Disclaimer</h2>
-        <div class="important">
-          <p>
-            Our application is provided on an "as is" and "as available" basis.
-            We make no warranties regarding the accuracy, completeness,
-            reliability, or timeliness of the application. We are not liable for
-            any direct, indirect, incidental, special, or consequential damages
-            arising from the use or inability to use our application.
-          </p>
-        </div>
-      </div>
-
-      <div class="section">
-        <h2>5. Dispute Resolution</h2>
-        <p>
-          If a dispute arises between you and us, you should first attempt to
-          resolve it through friendly negotiation. If negotiation fails, both
-          parties agree to submit the dispute to the courts with jurisdiction.
+          Our service is provided on an "as is" and "as available" basis. We
+          make no warranties regarding the accuracy, completeness, reliability,
+          or timeliness of the service. We are not liable for any direct,
+          indirect, incidental, special, or consequential damages arising from
+          the use or inability to use our service.
         </p>
       </div>
+    </div>
 
-      <div class="section">
-        <h2>6. Governing Law</h2>
-        <p>
-          This agreement shall be governed by and construed in accordance with
-          the laws of the State of California, without regard to its conflict of
-          law provisions.
-        </p>
-      </div>
+    <div class="section">
+      <h2>7. Dispute Resolution</h2>
+      <p>
+        If a dispute arises between you and us, you should first attempt to
+        resolve it through friendly negotiation. If negotiation fails, both
+        parties agree to submit the dispute to the courts with jurisdiction.
+      </p>
+    </div>
+
+    <div class="section">
+      <h2>8. Governing Law</h2>
+      <p>
+        This agreement shall be governed by and construed in accordance with the
+        laws of the State of California, without regard to its conflict of law
+        provisions.
+      </p>
     </div>
   </body>
 </html>
