@@ -9,13 +9,17 @@ import {
   Paper,
   Button,
   Typography,
+  Box,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
+import { CheckCircle, Cancel, HourglassEmpty } from "@mui/icons-material";
 
 interface Rental {
   _id: string;
   movieId: {
     title: string;
-  };
+  } | null;
   userId: {
     email: string;
   };
@@ -25,13 +29,14 @@ interface Rental {
   totalPrice: number;
 }
 
+const API_URL = "http://localhost:5001/api/rentals";
 const RentalList = () => {
   const [rentals, setRentals] = React.useState<Rental[]>([]);
 
   React.useEffect(() => {
     const fetchRentals = async () => {
       try {
-        const response = await fetch("http://localhost:5001/api/rentals/all", {
+        const response = await fetch(`${API_URL}/admin`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
@@ -50,7 +55,7 @@ const RentalList = () => {
     newStatus: "new" | "pending" | "accepted" | "rejected"
   ) => {
     try {
-      const response = await fetch("http://localhost:5001/api/rentals/status", {
+      const response = await fetch(`${API_URL}/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -75,64 +80,83 @@ const RentalList = () => {
   };
 
   return (
-    <TableContainer component={Paper} sx={{ p: 3 }}>
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
         Rental Requests
       </Typography>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Movie</TableCell>
-            <TableCell>User</TableCell>
-            <TableCell>Start Date</TableCell>
-            <TableCell>End Date</TableCell>
-            <TableCell>Total Price</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rentals.map((rental) => (
-            <TableRow key={rental._id}>
-              <TableCell>{rental.movieId.title}</TableCell>
-              <TableCell>{rental.userId.email}</TableCell>
-              <TableCell>
-                {new Date(rental.startDate).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                {new Date(rental.endDate).toLocaleDateString()}
-              </TableCell>
-              <TableCell>${rental.totalPrice}</TableCell>
-              <TableCell>{rental.status}</TableCell>
-              <TableCell>
-                {["new", "pending"].includes(rental.status) && (
-                  <>
-                    <Button
-                      onClick={() => handleStatusUpdate(rental._id, "pending")}
-                      color="warning"
-                    >
-                      Pending
-                    </Button>
-                    <Button
-                      onClick={() => handleStatusUpdate(rental._id, "accepted")}
-                      color="success"
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      onClick={() => handleStatusUpdate(rental._id, "rejected")}
-                      color="error"
-                    >
-                      Reject
-                    </Button>
-                  </>
-                )}
-              </TableCell>
+      <TableContainer component={Paper} elevation={3}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Movie</TableCell>
+              <TableCell>User Email</TableCell>
+              <TableCell>Start Date</TableCell>
+              <TableCell>End Date</TableCell>
+              <TableCell>Total Price</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rentals.map(
+              (rental) =>
+                rental.movieId && (
+                  <TableRow key={rental._id}>
+                    <TableCell>
+                      {rental.movieId.title ? rental.movieId.title : "N/A"}
+                    </TableCell>
+                    <TableCell>{rental.userId.email}</TableCell>
+                    <TableCell>
+                      {new Date(rental.startDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {new Date(rental.endDate).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>${rental.totalPrice}</TableCell>
+                    <TableCell>{rental.status}</TableCell>
+                    <TableCell>
+                      {["new", "pending"].includes(rental.status) && (
+                        <Box sx={{ display: "flex", gap: 1 }}>
+                          <Tooltip title="Pending">
+                            <IconButton
+                              onClick={() =>
+                                handleStatusUpdate(rental._id, "pending")
+                              }
+                              color="warning"
+                            >
+                              <HourglassEmpty />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Accept">
+                            <IconButton
+                              onClick={() =>
+                                handleStatusUpdate(rental._id, "accepted")
+                              }
+                              color="success"
+                            >
+                              <CheckCircle />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Reject">
+                            <IconButton
+                              onClick={() =>
+                                handleStatusUpdate(rental._id, "rejected")
+                              }
+                              color="error"
+                            >
+                              <Cancel />
+                            </IconButton>
+                          </Tooltip>
+                        </Box>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

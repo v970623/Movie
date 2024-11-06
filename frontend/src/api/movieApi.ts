@@ -5,7 +5,7 @@ const API_URL = "http://localhost:5001/api/movies";
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
-  console.log("Using token:", token); // 添加日志
+  console.log("Using token:", token);
 
   return { Authorization: `Bearer ${token}` };
 };
@@ -14,7 +14,7 @@ export const createMovie = async (movieData: Movie) => {
   return axios.post(`${API_URL}/`, movieData, { headers: getAuthHeaders() });
 };
 
-export const updateMovieStatus = async (movieId: string, status: string) => {
+export const updateMovie = async (movieId: string, status: string) => {
   return axios.put(
     `${API_URL}/${movieId}`,
     { status },

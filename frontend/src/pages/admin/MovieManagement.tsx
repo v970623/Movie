@@ -3,7 +3,6 @@ import {
   Box,
   Container,
   Typography,
-  Paper,
   Grid,
   TextField,
   Button,
@@ -24,7 +23,7 @@ import {
 import { IMovie } from "../../types/movie";
 import {
   createMovie,
-  updateMovieStatus,
+  updateMovie,
   getMovies,
   deleteMovie,
 } from "../../api/movieApi";
@@ -34,6 +33,7 @@ const MovieManagement: React.FC = () => {
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const [editMovie, setEditMovie] = useState<Partial<IMovie> | null>(null);
   const [newMovie, setNewMovie] = useState<Partial<IMovie>>({
     title: "",
     description: "",
@@ -86,20 +86,34 @@ const MovieManagement: React.FC = () => {
         message: "Movie created successfully",
         severity: "success",
       });
-      setOpenDialog(false);
       fetchMovies();
-      setNewMovie({
-        title: "",
-        description: "",
-        genre: [],
-        posterUrl: "",
-        price: 0,
-        status: "available",
-      });
+      handleCloseDialog();
     } catch (error) {
       setSnackbar({
         open: true,
         message: "Failed to create movie",
+        severity: "error",
+      });
+    }
+  };
+
+  const handleEditMovie = async () => {
+    try {
+      if (!validateForm()) {
+        return;
+      }
+      await updateMovie(newMovie as IMovie);
+      setSnackbar({
+        open: true,
+        message: "Movie updated successfully",
+        severity: "success",
+      });
+      fetchMovies();
+      handleCloseDialog();
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: "Failed to update movie",
         severity: "error",
       });
     }
@@ -116,13 +130,17 @@ const MovieManagement: React.FC = () => {
     }
   };
 
-  const handleUpdateMovie = async (movieId: string, status: string) => {
-    try {
-      await updateMovieStatus(movieId, status);
-      fetchMovies();
-    } catch (error) {
-      console.error("Failed to update movie:", error);
-    }
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setEditMovie(null);
+    setNewMovie({
+      title: "",
+      description: "",
+      genre: [],
+      posterUrl: "",
+      price: 0,
+      status: "available",
+    });
   };
 
   const validateForm = () => {
@@ -146,6 +164,19 @@ const MovieManagement: React.FC = () => {
 
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const openDialogForEdit = (movie: IMovie) => {
+    setEditMovie(movie);
+    setNewMovie({
+      title: movie.title,
+      description: movie.description,
+      genre: movie.genre,
+      posterUrl: movie.posterUrl,
+      price: movie.price,
+      status: movie.status,
+    });
+    setOpenDialog(true);
   };
 
   return (
@@ -179,122 +210,87 @@ const MovieManagement: React.FC = () => {
               Add New Movie
             </Button>
           </Box>
-
           <Grid container spacing={3}>
-            {!Array.isArray(movies) ? (
-              <Grid item xs={12}>
-                <Typography color="error">
-                  No movies available or invalid data format
-                </Typography>
-              </Grid>
-            ) : movies.length === 0 ? (
-              <Grid item xs={12}>
-                <Typography>No movies found</Typography>
-              </Grid>
-            ) : (
-              movies.map((movie) => (
-                <Grid item xs={12} md={6} key={movie._id}>
-                  <Card
-                    elevation={0}
+            {movies.map((movie) => (
+              <Grid item xs={12} md={6} key={movie._id}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={movie.posterUrl}
+                    alt={movie.title}
+                  />
+                  <Box
                     sx={{
                       display: "flex",
-                      height: "100%",
-                      borderRadius: 2,
-                      boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
-                      transition: "transform 0.2s ease-in-out",
-                      "&:hover": {
-                        transform: "translateY(-4px)",
-                        boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
-                      },
+                      flexDirection: "column",
+                      width: "100%",
                     }}
                   >
-                    <CardMedia
-                      component="img"
-                      sx={{ width: 140 }}
-                      image={movie.posterUrl}
-                      alt={movie.title}
-                    />
-                    <Box
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        width: "100%",
-                      }}
-                    >
-                      <CardContent sx={{ flex: "1 0 auto", p: 2 }}>
-                        <Typography variant="h6" gutterBottom>
-                          {movie.title}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          gutterBottom
-                        >
-                          {movie.description}
-                        </Typography>
-                        <Box sx={{ mt: 1, mb: 1 }}>
-                          {movie.genre.map((genre) => (
-                            <Chip
-                              key={genre}
-                              label={genre}
-                              size="small"
-                              sx={{
-                                mr: 0.5,
-                                mb: 0.5,
-                                bgcolor: "primary.light",
-                                color: "primary.main",
-                              }}
-                            />
-                          ))}
-                        </Box>
-                        <Typography variant="h6" color="primary.main">
-                          ${movie.price}/day
-                        </Typography>
-                      </CardContent>
-                      <Divider />
-                      <CardActions
-                        sx={{ p: 2, justifyContent: "space-between" }}
+                    <CardContent sx={{ flex: "1 0 auto", p: 2 }}>
+                      <Typography variant="h6" gutterBottom>
+                        {movie.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        gutterBottom
                       >
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          onClick={() =>
-                            handleUpdateMovie(
-                              movie._id,
-                              movie.status === "available"
-                                ? "unavailable"
-                                : "available"
-                            )
-                          }
-                          sx={{ textTransform: "none" }}
-                        >
-                          {movie.status === "available"
-                            ? "Mark Unavailable"
-                            : "Mark Available"}
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="error"
-                          onClick={() => handleDeleteMovie(movie._id)}
-                          sx={{ textTransform: "none" }}
-                        >
-                          Delete
-                        </Button>
-                      </CardActions>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))
-            )}
+                        {movie.description}
+                      </Typography>
+                      <Box sx={{ mt: 1, mb: 1 }}>
+                        {movie.genre.map((genre) => (
+                          <Chip
+                            key={genre}
+                            label={genre}
+                            size="small"
+                            sx={{
+                              mr: 0.5,
+                              mb: 0.5,
+                              bgcolor: "primary.main",
+                              color: "white",
+                            }}
+                          />
+                        ))}
+                      </Box>
+                      <Typography variant="h6" color="primary.main">
+                        ${movie.price}/day
+                      </Typography>
+                    </CardContent>
+                    <Divider />
+                    <CardActions sx={{ p: 2, justifyContent: "space-between" }}>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        onClick={() => openDialogForEdit(movie)}
+                        sx={{ textTransform: "none" }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => handleDeleteMovie(movie._id)}
+                        sx={{ textTransform: "none" }}
+                      >
+                        Delete
+                      </Button>
+                    </CardActions>
+                  </Box>
+                </Card>
+              </Grid>
+            ))}
           </Grid>
 
           <Dialog
             open={openDialog}
-            onClose={() => setOpenDialog(false)}
+            onClose={handleCloseDialog}
             maxWidth="md"
             fullWidth
           >
-            <DialogTitle>Add New Movie</DialogTitle>
+            <DialogTitle>
+              {editMovie ? "Edit Movie" : "Add New Movie"}
+            </DialogTitle>
             <DialogContent>
               <Grid container spacing={2} sx={{ mt: 1 }}>
                 <Grid item xs={12} md={6}>
@@ -321,6 +317,8 @@ const MovieManagement: React.FC = () => {
                         price: parseFloat(e.target.value),
                       })
                     }
+                    error={!!formErrors.price}
+                    helperText={formErrors.price}
                     fullWidth
                     sx={{ mb: 2 }}
                   />
@@ -332,6 +330,8 @@ const MovieManagement: React.FC = () => {
                     onChange={(e) =>
                       setNewMovie({ ...newMovie, description: e.target.value })
                     }
+                    error={!!formErrors.description}
+                    helperText={formErrors.description}
                     fullWidth
                     multiline
                     rows={3}
@@ -348,6 +348,8 @@ const MovieManagement: React.FC = () => {
                         genre: e.target.value.split(", "),
                       })
                     }
+                    error={!!formErrors.genre}
+                    helperText={formErrors.genre}
                     fullWidth
                     sx={{ mb: 2 }}
                   />
@@ -359,6 +361,8 @@ const MovieManagement: React.FC = () => {
                     onChange={(e) =>
                       setNewMovie({ ...newMovie, posterUrl: e.target.value })
                     }
+                    error={!!formErrors.posterUrl}
+                    helperText={formErrors.posterUrl}
                     fullWidth
                     sx={{ mb: 2 }}
                   />
@@ -366,18 +370,35 @@ const MovieManagement: React.FC = () => {
               </Grid>
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+              <Button onClick={handleCloseDialog}>Cancel</Button>
               <Button
                 variant="contained"
                 onClick={() => {
-                  handleCreateMovie();
-                  setOpenDialog(false);
+                  if (editMovie) {
+                    handleEditMovie();
+                  } else {
+                    handleCreateMovie();
+                  }
                 }}
               >
-                Add Movie
+                {editMovie ? "Save Changes" : "Add Movie"}
               </Button>
             </DialogActions>
           </Dialog>
+
+          <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+          >
+            <Alert
+              onClose={() => setSnackbar({ ...snackbar, open: false })}
+              severity={snackbar.severity}
+              sx={{ width: "100%" }}
+            >
+              {snackbar.message}
+            </Alert>
+          </Snackbar>
         </>
       )}
     </Container>

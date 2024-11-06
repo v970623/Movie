@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, isStaff } from "../controllers/rentalController";
+import { authenticate } from "../middleware/authMiddleware";
+import { isStaff } from "../middleware/authMiddleware";
 import {
   createRental,
   getRentals,
@@ -11,7 +12,7 @@ const router = express.Router();
 
 router.post("/", authenticate, createRental);
 router.get("/", authenticate, getRentals);
-router.get("/all", authenticate, isStaff, getAllRentals);
+router.get("/admin", authenticate, isStaff, getAllRentals);
 router.put("/status", authenticate, isStaff, updateRentalStatus);
 
 export default router;

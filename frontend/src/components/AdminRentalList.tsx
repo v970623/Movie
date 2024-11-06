@@ -15,8 +15,7 @@ interface Rental {
   totalPrice: number;
   status: string;
 }
-
-const AdminRentalList: React.FC = () => {
+const AdminRentalList = () => {
   const [rentals, setRentals] = useState<Rental[]>([]);
   const [loading, setLoading] = useState(false);
 

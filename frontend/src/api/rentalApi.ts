@@ -28,7 +28,7 @@ export const rentalApi = {
   },
 
   getAllRentals: async () => {
-    return axios.get(`${API_BASE_URL}/all`, {
+    return axios.get(`${API_BASE_URL}/admin`, {
       headers: getAuthHeaders(),
     });
   },
