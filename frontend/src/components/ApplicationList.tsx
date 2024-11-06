@@ -21,7 +21,7 @@ import {
   getApplications,
   updateApplicationStatus,
   searchApplications,
-} from "../api/applicationApi";
+} from "../api/movieApi";
 import { format } from "date-fns";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { jwtDecode } from "jwt-decode";

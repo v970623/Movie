@@ -9,3 +9,12 @@ export interface IMovie {
   createdAt: string;
   updatedAt: string;
 }
+export interface SearchParams {
+  title?: string;
+  genre?: string;
+  director?: string;
+  releaseYear?: number;
+  priceRange?: [number, number];
+  price?: number;
+  status?: "available" | "unavailable";
+}

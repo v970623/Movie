@@ -11,17 +11,18 @@ export const createMovie = async (
   res: Response
 ): Promise<void> => {
   try {
-    const movieData = {
+    const movieData: any = {
       title: req.body.title,
       description: req.body.description,
       releaseYear: req.body.releaseYear,
-      genre: req.body.genre || [],
+      status: req.body.status || "available",
+      actors: req.body.actors,
+      price: req.body.price,
+      posterUrl: req.body.posterUrl,
       director: req.body.director,
-      actors: req.body.actors || [],
-      posterUrl: req.body.posterUrl || undefined,
-      rentalPrice: req.body.rentalPrice,
-      available: true,
     };
+
+    if (req.body.genre) movieData.genre = req.body.genre;
 
     const movie = await Movie.create(movieData);
     res.status(201).json({
