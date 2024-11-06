@@ -16,6 +16,7 @@ import RentalList from "./pages/admin/RentalList";
 import UserRentals from "./pages/UserRentals";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import MovieManagement from "./pages/admin/MovieManagement";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -70,7 +71,7 @@ function App() {
             }}
           >
             <Navbar />
-            <Box component="main" sx={{ flexGrow: 1, pt: "64px" }}>
+            <Box component="main" sx={{ flexGrow: 1, pt: "64px", pb: 4 }}>
               <Routes>
                 <Route path="/login" element={<LoginPage />} />
 
@@ -93,6 +94,14 @@ function App() {
                 />
 
                 <Route
+                  path="/my-rentals"
+                  element={
+                    <ProtectedRoute>
+                      <UserRentals />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/admin/rentals"
                   element={
                     <ProtectedRoute requireRole="staff">
@@ -100,12 +109,11 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
-                  path="/my-rentals"
+                  path="/admin/movies"
                   element={
-                    <ProtectedRoute>
-                      <UserRentals />
+                    <ProtectedRoute requireRole="staff">
+                      <MovieManagement />
                     </ProtectedRoute>
                   }
                 />

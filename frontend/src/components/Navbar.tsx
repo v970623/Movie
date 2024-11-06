@@ -19,6 +19,7 @@ import { AuthContext } from "../context/AuthContext";
 const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, userRole, logout } = useContext(AuthContext);
+  const isStaff = userRole === "staff";
 
   const handleLogout = () => {
     logout();
@@ -41,30 +42,48 @@ const Navbar = () => {
         </IconButton>
 
         <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
-          Movie Rental System
+          Movie Rental
         </Typography>
 
-        {userRole === "staff" ? (
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              color="inherit"
-              startIcon={<AdminIcon />}
-              onClick={() => navigate("/admin/rentals")}
-            >
-              Rental Management
-            </Button>
-          </Box>
-        ) : (
-          <Box sx={{ display: "flex", gap: 2 }}>
-            <Button
-              color="inherit"
-              startIcon={<RentalIcon />}
-              onClick={() => navigate("/my-rentals")}
-            >
-              My Rentals
-            </Button>
-          </Box>
-        )}
+        <Box sx={{ display: "flex", gap: 2 }}>
+          {!isStaff && (
+            <>
+              <Button
+                color="inherit"
+                onClick={() => navigate("/movies")}
+                sx={{ textTransform: "none" }}
+              >
+                Movies
+              </Button>
+              <Button
+                color="inherit"
+                startIcon={<RentalIcon />}
+                onClick={() => navigate("/my-rentals")}
+              >
+                My Rentals
+              </Button>
+            </>
+          )}
+
+          {isStaff && (
+            <>
+              <Button
+                color="inherit"
+                onClick={() => navigate("/admin/movies")}
+                startIcon={<AdminIcon />}
+              >
+                Movie Management
+              </Button>
+              <Button
+                color="inherit"
+                onClick={() => navigate("/admin/rentals")}
+                startIcon={<RentalIcon />}
+              >
+                Rental Management
+              </Button>
+            </>
+          )}
+        </Box>
 
         <IconButton color="inherit" onClick={handleLogout}>
           <LogoutIcon />

@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import GoogleIcon from "@mui/icons-material/Google";
@@ -88,6 +89,10 @@ const StyledLink = styled(Link)({
   },
 });
 
+interface DecodedToken {
+  id: string;
+  role: "staff" | "public";
+}
 export const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -102,11 +107,20 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const response = await loginUser(username, password || undefined);
-      localStorage.setItem("token", response.data.token);
-      console.log("Token saved:", response.data.token);
+      const response = await loginUser(username, password);
+      const token = response.data.token;
+
+      localStorage.setItem("token", token);
+
+      const decoded = jwtDecode<DecodedToken>(token);
+
       authContext?.login();
-      navigate("/application");
+
+      if (decoded.role === "staff") {
+        navigate("/admin/movies");
+      } else {
+        navigate("/movies");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setError("Login failed, please check your username and password");
