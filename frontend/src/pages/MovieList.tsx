@@ -1,13 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col } from "antd";
-import MovieCard from "../components/MovieCard";
-import { IMovie } from "../types/movie";
+import {
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  Typography,
+  Button,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:5001/api/movies";
 
+import { IMovie } from "../types/movie";
+
 const MovieList: React.FC = () => {
   const [movies, setMovies] = useState<IMovie[]>([]);
+  const navigate = useNavigate();
 
   const fetchMovies = async () => {
     try {
@@ -28,13 +37,39 @@ const MovieList: React.FC = () => {
   }, []);
 
   return (
-    <Row gutter={[16, 16]}>
+    <Grid container spacing={3} sx={{ p: 3 }}>
       {movies.map((movie) => (
-        <Col key={movie._id} xs={24} sm={12} md={8} lg={6}>
-          <MovieCard movie={movie} onRefresh={fetchMovies} />
-        </Col>
+        <Grid item xs={12} sm={6} md={4} key={movie._id}>
+          <Card>
+            <CardMedia
+              component="img"
+              height="300"
+              image={movie.posterUrl}
+              alt={movie.title}
+            />
+            <CardContent>
+              <Typography gutterBottom variant="h5">
+                {movie.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {movie.description}
+              </Typography>
+              <Typography variant="h6" sx={{ mt: 2 }}>
+                ${movie.price}/day
+              </Typography>
+              <Button
+                variant="contained"
+                fullWidth
+                sx={{ mt: 2 }}
+                onClick={() => navigate(`/movies/${movie._id}`)}
+              >
+                View Details
+              </Button>
+            </CardContent>
+          </Card>
+        </Grid>
       ))}
-    </Row>
+    </Grid>
   );
 };
 

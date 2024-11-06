@@ -1,6 +1,5 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
-
 interface DecodedToken {
   id: string;
   role: "staff" | "public";
@@ -20,13 +19,11 @@ export const AuthContext = createContext<AuthContextType>({
   logout: () => {},
 });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState<"staff" | "public" | null>(null);
-
-  useEffect(() => {
-    console.log("Auth state changed:", { isAuthenticated, userRole });
-  }, [isAuthenticated, userRole]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,9 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const decoded = jwtDecode<DecodedToken>(token);
         setUserRole(decoded.role);
         setIsAuthenticated(true);
-        console.log("Token found and validated");
       } catch (error) {
-        console.error("Token validation failed:", error);
         localStorage.removeItem("token");
         setIsAuthenticated(false);
         setUserRole(null);
@@ -48,17 +43,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = () => {
     const token = localStorage.getItem("token");
     if (token) {
-      try {
-        const decoded = jwtDecode<DecodedToken>(token);
-        setUserRole(decoded.role);
-        setIsAuthenticated(true);
-        console.log("Login successful, decoded token:", decoded);
-      } catch (error) {
-        console.error("Login failed:", error);
-        localStorage.removeItem("token");
-        setIsAuthenticated(false);
-        setUserRole(null);
-      }
+      const decoded = jwtDecode<DecodedToken>(token);
+      setUserRole(decoded.role);
+      setIsAuthenticated(true);
     }
   };
 

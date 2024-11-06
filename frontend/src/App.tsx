@@ -1,6 +1,6 @@
 import { AuthProvider } from "./context/AuthContext";
 import {
-  BrowserRouter as Router,
+  BrowserRouter,
   Routes,
   Route,
   Navigate,
@@ -10,15 +10,14 @@ import {
 import { Box, CssBaseline, CircularProgress } from "@mui/material";
 import Navbar from "./components/Navbar";
 import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ApplicationPage from "./pages/ApplicationPage";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsOfService from "./pages/TermsOfService";
+import MovieList from "./pages/MovieList";
+import MovieDetail from "./pages/MovieDetail";
+import RentalList from "./pages/admin/RentalList";
+import UserRentals from "./pages/UserRentals";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
 
-// OAuth 回调处理组件
 function OAuthCallback() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -32,7 +31,7 @@ function OAuthCallback() {
       localStorage.setItem("token", token);
       login();
       setTimeout(() => {
-        navigate(userRole === "staff" ? "/admin" : "/movies");
+        navigate(userRole === "staff" ? "/admin/rentals" : "/movies");
       }, 1000);
     } else {
       navigate("/login");
@@ -56,42 +55,58 @@ function OAuthCallback() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <BrowserRouter>
         <CssBaseline />
         <Box
           sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}
         >
           <Navbar />
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              paddingTop: "64px",
-              backgroundColor: "#f5f5f5",
-            }}
-          >
+          <Box component="main" sx={{ flexGrow: 1, pt: "64px" }}>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
+
               <Route
-                path="/application"
+                path="/movies"
                 element={
                   <ProtectedRoute>
-                    <ApplicationPage />
+                    <MovieList />
                   </ProtectedRoute>
                 }
               />
+
               <Route
-                path="/"
-                element={<Navigate to="/application" replace />}
+                path="/movies/:id"
+                element={
+                  <ProtectedRoute>
+                    <MovieDetail />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
+
+              <Route
+                path="/admin/rentals"
+                element={
+                  <ProtectedRoute requireRole="staff">
+                    <RentalList />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/my-rentals"
+                element={
+                  <ProtectedRoute>
+                    <UserRentals />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route path="/" element={<Navigate to="/movies" replace />} />
               <Route path="/auth/success" element={<OAuthCallback />} />
             </Routes>
           </Box>
         </Box>
-      </Router>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

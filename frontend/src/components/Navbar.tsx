@@ -1,41 +1,24 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import {
   AppBar,
   Toolbar,
   IconButton,
   Typography,
   Box,
-  styled,
-  Menu,
-  MenuItem,
-  ListItemIcon,
+  Button,
 } from "@mui/material";
 import {
-  Home as HomeIcon,
-  ArrowBack as ArrowBackIcon,
-  Dashboard as DashboardIcon,
+  Movie as MovieIcon,
+  VideoLibrary as RentalIcon,
+  AdminPanelSettings as AdminIcon,
   Logout as LogoutIcon,
-  Assignment as AssignmentIcon,
 } from "@mui/icons-material";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { jwtDecode } from "jwt-decode";
-
-interface DecodedToken {
-  role: "staff" | "public";
-  id: string;
-}
-
-const StyledAppBar = styled(AppBar)({
-  backgroundColor: "rgba(255, 255, 255, 0.95)",
-  backdropFilter: "blur(8px)",
-  boxShadow: "0 1px 3px rgba(0, 0, 0, 0.05)",
-});
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const { isAuthenticated, logout, userRole } = useContext(AuthContext);
+  const { isAuthenticated, userRole, logout } = useContext(AuthContext);
 
   const handleLogout = () => {
     logout();
@@ -47,58 +30,47 @@ const Navbar = () => {
   }
 
   return (
-    <StyledAppBar position="fixed">
+    <AppBar position="fixed">
       <Toolbar>
-        {location.pathname !== "/" && (
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => navigate(-1)}
-            sx={{ color: "#666" }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-        )}
-
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, color: "#333" }}
+        <IconButton
+          color="inherit"
+          onClick={() => navigate("/movies")}
+          edge="start"
         >
-          Application System
+          <MovieIcon />
+        </IconButton>
+
+        <Typography variant="h6" sx={{ flexGrow: 1, ml: 2 }}>
+          Movie Rental System
         </Typography>
 
         {userRole === "staff" ? (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
               color="inherit"
-              onClick={() => navigate("/application")}
-              sx={{ color: "#666" }}
+              startIcon={<AdminIcon />}
+              onClick={() => navigate("/admin/rentals")}
             >
-              <DashboardIcon />
-            </IconButton>
+              Rental Management
+            </Button>
           </Box>
         ) : (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Button
               color="inherit"
-              onClick={() => navigate("/application")}
-              sx={{ color: "#666" }}
+              startIcon={<RentalIcon />}
+              onClick={() => navigate("/my-rentals")}
             >
-              <AssignmentIcon />
-            </IconButton>
+              My Rentals
+            </Button>
           </Box>
         )}
 
-        <IconButton
-          color="inherit"
-          onClick={handleLogout}
-          sx={{ color: "#666", ml: 1 }}
-        >
+        <IconButton color="inherit" onClick={handleLogout}>
           <LogoutIcon />
         </IconButton>
       </Toolbar>
-    </StyledAppBar>
+    </AppBar>
   );
 };
 

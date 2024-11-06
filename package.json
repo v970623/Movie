@@ -1,7 +1,12 @@
 {
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.6",
+    "@mui/x-date-pickers": "^7.22.1",
     "@types/mongoose": "^5.11.96",
     "cors": "^2.8.5",
+    "date-fns": "^4.1.0",
     "mongoose": "^8.7.3"
   },
   "scripts": {
