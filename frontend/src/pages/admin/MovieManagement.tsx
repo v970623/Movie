@@ -29,7 +29,7 @@ import {
 } from "../../api/movieApi";
 import AddIcon from "@mui/icons-material/Add";
 
-const MovieManagement: React.FC = () => {
+const MovieManagement = () => {
   const [movies, setMovies] = useState<IMovie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
@@ -99,10 +99,15 @@ const MovieManagement: React.FC = () => {
 
   const handleEditMovie = async () => {
     try {
-      if (!validateForm()) {
+      if (!validateForm() || !editMovie?._id) {
         return;
       }
-      await updateMovie(newMovie as IMovie);
+
+      await updateMovie({
+        ...newMovie,
+        _id: editMovie._id,
+      } as IMovie);
+
       setSnackbar({
         open: true,
         message: "Movie updated successfully",
@@ -213,10 +218,10 @@ const MovieManagement: React.FC = () => {
           <Grid container spacing={3}>
             {movies.map((movie) => (
               <Grid item xs={12} md={6} key={movie._id}>
-                <Card>
+                <Card sx={{ display: "flex" }}>
                   <CardMedia
                     component="img"
-                    height="140"
+                    sx={{ width: 140, height: 210 }}
                     image={movie.posterUrl}
                     alt={movie.title}
                   />

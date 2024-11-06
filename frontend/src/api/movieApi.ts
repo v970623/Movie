@@ -14,19 +14,29 @@ export const createMovie = async (movieData: Movie) => {
   return axios.post(`${API_URL}/`, movieData, { headers: getAuthHeaders() });
 };
 
-export const updateMovie = async (movieId: string, status: string) => {
+export const updateMovie = async (movie: Movie) => {
   return axios.put(
-    `${API_URL}/${movieId}`,
-    { status },
-    { headers: getAuthHeaders() }
+    `${API_URL}/${movie._id}`,
+    {
+      title: movie.title,
+      description: movie.description,
+      genre: movie.genre,
+      posterUrl: movie.posterUrl,
+      price: movie.price,
+      status: movie.status,
+    },
+    {
+      headers: getAuthHeaders(),
+    }
   );
 };
 
 interface MovieResponse {
   status: string;
-  data: Movie[];
+  data: {
+    movies: Movie[];
+  };
 }
-
 export const getMovies = async (): Promise<AxiosResponse<MovieResponse>> => {
   return axios.get<MovieResponse>(`${API_URL}`, {
     headers: getAuthHeaders(),
