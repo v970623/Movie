@@ -63,77 +63,80 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthProvider>
-        <BrowserRouter>
-          <CssBaseline />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "100vh",
-            }}
-          >
-            <Navbar />
-            <Box component="main" sx={{ flexGrow: 1, pt: "64px", pb: 4 }}>
-              <Routes>
-                <Route path="/login" element={<LoginPage />} />
-
-                <Route
-                  path="/movies"
-                  element={
-                    <ProtectedRoute>
-                      <MovieList />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="/movies/:id"
-                  element={
-                    <ProtectedRoute>
-                      <MovieDetail />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route
-                  path="/my-rentals"
-                  element={
-                    <ProtectedRoute>
-                      <UserRentals />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/rentals"
-                  element={
-                    <ProtectedRoute requireRole="staff">
-                      <RentalList />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/admin/movies"
-                  element={
-                    <ProtectedRoute requireRole="staff">
-                      <MovieManagement />
-                    </ProtectedRoute>
-                  }
-                />
-
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms-of-service" element={<TermsOfService />} />
-
-                <Route path="/messages" element={<MessageForm />} />
-                <Route path="/reply/:userId" element={<ReplyForm />} />
-
-                <Route path="/" element={<Navigate to="/movies" replace />} />
-                <Route path="/auth/success" element={<OAuthCallback />} />
-              </Routes>
-            </Box>
-          </Box>
-        </BrowserRouter>
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
+  );
+}
+
+function AppContent() {
+  const { isAuthenticated, userRole } = useContext(AuthContext);
+
+  return (
+    <BrowserRouter>
+      <CssBaseline />
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
+        <Navbar />
+        <Box component="main" sx={{ flexGrow: 1, pt: "64px", pb: 4 }}>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/movies"
+              element={
+                <ProtectedRoute>
+                  <MovieList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/movies/:id"
+              element={
+                <ProtectedRoute>
+                  <MovieDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-rentals"
+              element={
+                <ProtectedRoute>
+                  <UserRentals />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/rentals"
+              element={
+                <ProtectedRoute requireRole="staff">
+                  <RentalList />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/movies"
+              element={
+                <ProtectedRoute requireRole="staff">
+                  <MovieManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/messages" element={<MessageForm />} />
+            <Route path="/reply/:userId" element={<ReplyForm />} />
+            <Route path="/" element={<Navigate to="/movies" replace />} />
+            <Route path="/auth/success" element={<OAuthCallback />} />
+          </Routes>
+        </Box>
+        {isAuthenticated && userRole !== "staff" && <MessageForm />}
+      </Box>
+    </BrowserRouter>
   );
 }
 

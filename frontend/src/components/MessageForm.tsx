@@ -1,8 +1,19 @@
 import React, { useState } from "react";
-import { TextField, Button, Snackbar, Alert } from "@mui/material";
+import {
+  Dialog,
+  TextField,
+  Button,
+  Snackbar,
+  Alert,
+  Fab,
+  Box,
+  Typography,
+} from "@mui/material";
+import { Message as MessageIcon } from "@mui/icons-material";
 import { sendMessageToAdmin } from "../api/messageApi";
 
 const MessageForm = () => {
+  const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -13,6 +24,8 @@ const MessageForm = () => {
   const handleSendMessage = async () => {
     try {
       await sendMessageToAdmin({ content: message });
+      setMessage("");
+      setOpen(false);
       setSnackbar({
         open: true,
         message: "Message sent successfully",
@@ -28,31 +41,56 @@ const MessageForm = () => {
   };
 
   return (
-    <div>
-      <TextField
-        label="Message to Admin"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
+    <>
+      <Fab
+        color="primary"
+        sx={{
+          position: "fixed",
+          bottom: 16,
+          right: 16,
+          zIndex: 1000,
+        }}
+        onClick={() => setOpen(true)}
+      >
+        <MessageIcon />
+      </Fab>
+
+      <Dialog
+        open={open}
+        onClose={() => setOpen(false)}
+        maxWidth="sm"
         fullWidth
-        multiline
-        rows={4}
-      />
-      <Button variant="contained" onClick={handleSendMessage}>
-        Send Message
-      </Button>
+      >
+        <Box sx={{ p: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2 }}>
+            Send Message to Admin
+          </Typography>
+          <TextField
+            label="Your Message"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            fullWidth
+            multiline
+            rows={4}
+            sx={{ mb: 2 }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+            <Button onClick={() => setOpen(false)}>Cancel</Button>
+            <Button variant="contained" onClick={handleSendMessage}>
+              Send
+            </Button>
+          </Box>
+        </Box>
+      </Dialog>
+
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={() => setSnackbar({ ...snackbar, open: false })}
       >
-        <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
-          severity={snackbar.severity}
-        >
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
-    </div>
+    </>
   );
 };
 
