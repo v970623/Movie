@@ -120,11 +120,14 @@ export const getRentals = async (
       userId: (req.user as IUserWithId).id,
     })
       .populate("movieId")
+      .populate("userId")
       .sort("-createdAt");
+
+    const validRentals = rentals.filter((rental) => rental.movieId != null);
 
     res.status(200).json({
       status: "success",
-      data: rentals,
+      data: validRentals,
     });
   } catch (error) {
     res.status(400).json({

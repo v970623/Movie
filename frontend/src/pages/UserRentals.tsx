@@ -45,28 +45,35 @@ const UserRentals = () => {
         <TableBody>
           {rentals.map((rental: any) => (
             <TableRow key={rental._id}>
-              <TableCell>{rental.movieId.title}</TableCell>
-              <TableCell>
-                {new Date(rental.startDate).toLocaleDateString()}
-              </TableCell>
-              <TableCell>
-                {new Date(rental.endDate).toLocaleDateString()}
-              </TableCell>
-              <TableCell>${rental.totalPrice}</TableCell>
-              <TableCell>
-                <Chip
-                  label={rental.status}
-                  color={
-                    rental.status === "pending"
-                      ? "warning"
-                      : rental.status === "accepted" || rental.status === "new"
-                      ? "success"
-                      : rental.status === "rejected"
-                      ? "error"
-                      : "default"
-                  }
-                />
-              </TableCell>
+              {rental.movieId ? (
+                <>
+                  <TableCell>{rental.movieId.title}</TableCell>
+                  <TableCell>
+                    {new Date(rental.startDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(rental.endDate).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>${rental.totalPrice}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={rental.status}
+                      color={
+                        rental.status === "pending"
+                          ? "warning"
+                          : rental.status === "accepted" ||
+                            rental.status === "new"
+                          ? "success"
+                          : rental.status === "rejected"
+                          ? "error"
+                          : "default"
+                      }
+                    />
+                  </TableCell>
+                </>
+              ) : (
+                <TableCell>N/A</TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

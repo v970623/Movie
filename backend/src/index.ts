@@ -4,6 +4,7 @@ import cors from "cors";
 import authRoutes from "./routes/authRoutes";
 import movieRoutes from "./routes/movieRoutes";
 import rentalRoutes from "./routes/rentalRoutes";
+import messageRoutes from "./routes/messageRoutes";
 import path from "path";
 import fs from "fs";
 import passport from "passport";
@@ -47,6 +48,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/rentals", rentalRoutes);
+app.use("/api/messages", messageRoutes);
 
 const uploadDir = path.join(__dirname, "../uploads");
 if (!fs.existsSync(uploadDir)) {
