@@ -8,6 +8,7 @@ import {
   Fab,
   Box,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { Message as MessageIcon } from "@mui/icons-material";
 import { sendMessageToAdmin } from "../api/messageApi";
@@ -20,8 +21,10 @@ const MessageForm = () => {
     message: "",
     severity: "success",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleSendMessage = async () => {
+    setLoading(true);
     try {
       await sendMessageToAdmin({ content: message });
       setMessage("");
@@ -31,12 +34,15 @@ const MessageForm = () => {
         message: "Message sent successfully",
         severity: "success",
       });
+      alert("Message sent successfully");
     } catch (error) {
       setSnackbar({
         open: true,
-        message: "Failed to send message",
+        message: error.response?.data?.message || "Failed to send message",
         severity: "error",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -75,9 +81,16 @@ const MessageForm = () => {
             sx={{ mb: 2 }}
           />
           <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-            <Button onClick={() => setOpen(false)}>Cancel</Button>
-            <Button variant="contained" onClick={handleSendMessage}>
-              Send
+            <Button onClick={() => setOpen(false)} disabled={loading}>
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={handleSendMessage}
+              disabled={loading}
+              startIcon={loading && <CircularProgress size={20} />}
+            >
+              {loading ? "Sending..." : "Send"}
             </Button>
           </Box>
         </Box>

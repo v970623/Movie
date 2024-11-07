@@ -7,7 +7,7 @@ import { authenticate, isStaff } from "../middleware/authMiddleware";
 
 const router = express.Router();
 
-router.post("/", authenticate, sendMessageToAdmin);
+router.post("/send", authenticate, sendMessageToAdmin);
 router.post("/reply", authenticate, isStaff, replyToUserMessage);
 
 export default router;

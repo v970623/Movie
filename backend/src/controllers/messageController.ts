@@ -7,18 +7,35 @@ export const sendMessageToAdmin = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { userId, message } = req.body;
+    console.log("Received message request:", req.body);
+    const { content } = req.body;
 
+    const userId = req.user?.id;
+    if (!userId) {
+      console.error("User ID not found in request");
+      res.status(401).json({ error: "User authentication failed" });
+      return;
+    }
+
+    if (!content) {
+      console.error("Missing content in request");
+      res.status(400).json({ error: "Message content is required" });
+      return;
+    }
+
+    console.log("Sending notification with:", { userId, content });
     await sendEmailNotification("user_message", {
       userId,
-      message,
+      message: content,
     });
 
+    console.log("Message sent successfully");
     res.status(200).json({
       status: "success",
       message: "Message sent to admin successfully",
     });
   } catch (error) {
+    console.error("Error in sendMessageToAdmin:", error);
     res.status(500).json({
       status: "error",
       message: "Failed to send message to admin",
