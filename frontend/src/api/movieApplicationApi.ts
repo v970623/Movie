@@ -19,9 +19,18 @@ export const submitMovieApplication = async (data: MovieApplicationData) => {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
+      timeout: 10000,
     });
     return response.data;
   } catch (error) {
+    if (axios.isAxiosError(error)) {
+      if (error.code === "ECONNABORTED") {
+        throw new Error("Error: Request timed out, please try again later");
+      }
+      if (error.response?.status === 413) {
+        throw new Error("Error: File too large, please compress and try again");
+      }
+    }
     console.error("Submit application error:", error);
     throw error;
   }

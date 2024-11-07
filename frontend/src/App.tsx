@@ -18,6 +18,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import MovieManagement from "./pages/admin/MovieManagement";
 import MessageForm from "./components/MessageForm";
+import MovieApplicationForm from "./components/MovieApplicationForm";
+import MovieApplicationManagement from "./pages/admin/MovieApplicationManagement";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -101,6 +103,14 @@ function AppContent() {
               }
             />
             <Route
+              path="/submit-movie"
+              element={
+                <ProtectedRoute>
+                  <MovieApplicationForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/my-rentals"
               element={
                 <ProtectedRoute>
@@ -121,6 +131,14 @@ function AppContent() {
               element={
                 <ProtectedRoute requireRole="staff">
                   <MovieManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/movie-applications"
+              element={
+                <ProtectedRoute requireRole="staff">
+                  <MovieApplicationManagement />
                 </ProtectedRoute>
               }
             />

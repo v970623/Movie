@@ -12,6 +12,7 @@ import {
   VideoLibrary as RentalIcon,
   AdminPanelSettings as AdminIcon,
   Logout as LogoutIcon,
+  AddCircleOutline as AddIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -58,6 +59,13 @@ const Navbar = () => {
               </Button>
               <Button
                 color="inherit"
+                startIcon={<AddIcon />}
+                onClick={() => navigate("/submit-movie")}
+              >
+                Submit Movie
+              </Button>
+              <Button
+                color="inherit"
                 startIcon={<RentalIcon />}
                 onClick={() => navigate("/my-rentals")}
               >
@@ -74,6 +82,13 @@ const Navbar = () => {
                 startIcon={<AdminIcon />}
               >
                 Movie Management
+              </Button>
+              <Button
+                color="inherit"
+                onClick={() => navigate("/admin/applications")}
+                startIcon={<AdminIcon />}
+              >
+                Applications
               </Button>
               <Button
                 color="inherit"

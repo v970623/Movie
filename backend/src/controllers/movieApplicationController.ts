@@ -8,10 +8,20 @@ export const submitApplication = async (
 ): Promise<void> => {
   try {
     const userId = req.user?.id;
+    const { posterUrl, ...rest } = req.body;
     const applicationData = {
-      ...req.body,
+      ...rest,
       userId,
+      posterUrl,
     };
+
+    if (posterUrl && posterUrl.length > 1000000) {
+      return res.status(413).json({
+        status: "error",
+        message:
+          "Poster URL payload too large. Please compress the image or increase the server's request size limit.",
+      });
+    }
 
     const application = await MovieApplication.create(applicationData);
 

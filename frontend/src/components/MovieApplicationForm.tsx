@@ -9,6 +9,7 @@ import {
   Alert,
 } from "@mui/material";
 import { submitMovieApplication } from "../api/movieApplicationApi";
+import imageCompression from "browser-image-compression";
 
 const MovieApplicationForm = () => {
   const [formData, setFormData] = useState({
@@ -23,12 +24,91 @@ const MovieApplicationForm = () => {
     message: "",
     severity: "success" as "success" | "error",
   });
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
+
+  const validateImage = (file: File) => {
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setSnackbar({
+        open: true,
+        message: "Image size cannot exceed 5MB",
+        severity: "error",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!validateImage(file)) {
+        return;
+      }
+      setSelectedFile(file);
+      try {
+        const compressedDataUrl = await compressImage(file);
+        setFormData((prev) => ({
+          ...prev,
+          posterUrl: compressedDataUrl as string,
+        }));
+        generateThumbnail(file);
+      } catch (error) {
+        setSnackbar({
+          open: true,
+          message: "Image processing failed",
+          severity: "error",
+        });
+      }
+    }
+  };
+
+  const compressImage = async (imageFile: File) => {
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 800,
+      useWebWorker: true,
+      initialQuality: 0.7,
+    };
+
+    try {
+      const compressedFile = await imageCompression(imageFile, options);
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(compressedFile);
+      });
+    } catch (error) {
+      console.error("Image compression failed:", error);
+      setSnackbar({
+        open: true,
+        message: "Image compression failed, please try using a smaller image",
+        severity: "error",
+      });
+      throw error;
+    }
+  };
+
+  const generateThumbnail = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setThumbnail(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      let posterUrl = formData.posterUrl;
+      if (selectedFile) {
+        posterUrl = (await compressImage(selectedFile)) as string;
+      }
       await submitMovieApplication({
         ...formData,
+        posterUrl,
         price: Number(formData.price),
         genre: formData.genre.split(",").map((g) => g.trim()),
       });
@@ -44,7 +124,10 @@ const MovieApplicationForm = () => {
         price: "",
         genre: "",
       });
+      setPosterPreview(null);
+      setThumbnail(null);
     } catch (error) {
+      console.error("Error submitting application:", error);
       setSnackbar({
         open: true,
         message: "Failed to submit application",
@@ -79,16 +162,37 @@ const MovieApplicationForm = () => {
           rows={4}
           required
         />
-        <TextField
-          fullWidth
-          label="Poster URL"
-          value={formData.posterUrl}
-          onChange={(e) =>
-            setFormData({ ...formData, posterUrl: e.target.value })
-          }
-          margin="normal"
-          required
-        />
+        <Button variant="contained" component="label" sx={{ mt: 2, mb: 2 }}>
+          Upload Poster
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={handleImageChange}
+          />
+        </Button>
+        {thumbnail && (
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="subtitle1">Thumbnail Preview:</Typography>
+            <Box
+              component="img"
+              src={thumbnail}
+              alt="Thumbnail Preview"
+              sx={{ width: "100%", minWidth: 100, height: "auto" }}
+            />
+          </Box>
+        )}
+        {posterPreview && (
+          <Box sx={{ mt: 2, mb: 2 }}>
+            <Typography variant="subtitle1">Poster Preview:</Typography>
+            <Box
+              component="img"
+              src={posterPreview}
+              alt="Poster Preview"
+              sx={{ width: "100%", minWidth: 100, height: "auto" }}
+            />
+          </Box>
+        )}
         <TextField
           fullWidth
           label="Price"
