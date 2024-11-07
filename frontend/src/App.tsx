@@ -18,7 +18,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import MovieManagement from "./pages/admin/MovieManagement";
 import MessageForm from "./components/MessageForm";
-import ReplyForm from "./components/ReplyForm";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -32,7 +31,6 @@ function OAuthCallback() {
 
   useEffect(() => {
     const token = searchParams.get("token");
-    console.log("Received token:", token);
 
     if (token) {
       localStorage.setItem("token", token);
@@ -129,7 +127,6 @@ function AppContent() {
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/messages" element={<MessageForm />} />
-            <Route path="/reply/:userId" element={<ReplyForm />} />
             <Route path="/" element={<Navigate to="/movies" replace />} />
             <Route path="/auth/success" element={<OAuthCallback />} />
           </Routes>

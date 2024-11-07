@@ -12,7 +12,6 @@ import {
   VideoLibrary as RentalIcon,
   AdminPanelSettings as AdminIcon,
   Logout as LogoutIcon,
-  Reply as ReplyIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -82,13 +81,6 @@ const Navbar = () => {
                 startIcon={<RentalIcon />}
               >
                 Rental Management
-              </Button>
-              <Button
-                color="inherit"
-                startIcon={<ReplyIcon />}
-                onClick={() => navigate("/reply/:userId")}
-              >
-                Reply to Users
               </Button>
             </>
           )}

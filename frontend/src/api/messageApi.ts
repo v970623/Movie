@@ -16,23 +16,3 @@ export const sendMessageToAdmin = async (data: { content: string }) => {
     throw error;
   }
 };
-
-export const replyToUserMessage = async ({
-  userId,
-  replyMessage,
-}: {
-  userId: string;
-  replyMessage: string;
-}) => {
-  const token = localStorage.getItem("token");
-  return axios.post(
-    `${API_BASE_URL}/reply`,
-    { userId, replyMessage },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-};

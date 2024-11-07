@@ -55,23 +55,6 @@ const getEmailTemplate = (type: string, data: any) => {
           <p>Total Price: $${data.totalPrice.toFixed(2)}</p>
         `,
       };
-    case "user_message":
-      return {
-        subject: "New Message from User",
-        html: `
-          <h2>User Message</h2>
-          <p>User ID: ${data.userId}</p>
-          <p>Message: ${data.message}</p>
-        `,
-      };
-    case "admin_reply":
-      return {
-        subject: "Reply from Admin",
-        html: `
-          <h2>Admin Reply</h2>
-          <p>${data.message}</p>
-        `,
-      };
     default:
       return {
         subject: "System Notification",
@@ -88,16 +71,13 @@ export const sendEmailNotification = async (
     const template = getEmailTemplate(type, data);
 
     let recipient: string;
-    if (type === "new_application" || type === "user_message") {
+    if (type === "new_application") {
       const adminEmail = process.env.MAIL_FROM;
       if (!adminEmail) {
         throw new Error("Admin email not configured");
       }
       recipient = adminEmail;
-    } else if (
-      type === "rental_confirmation" ||
-      (type === "admin_reply" && data.userId)
-    ) {
+    } else if (type === "rental_confirmation" && data.userId) {
       const user = await User.findById(data.userId);
       if (!user?.email) {
         throw new Error("User email not found");
