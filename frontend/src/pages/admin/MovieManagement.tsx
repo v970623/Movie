@@ -20,13 +20,8 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
+import { movieAPI } from "../../services/api";
 import { IMovie } from "../../types/movie";
-import {
-  createMovie,
-  updateMovie,
-  getMovies,
-  deleteMovie,
-} from "../../api/movieApi";
 import AddIcon from "@mui/icons-material/Add";
 
 const MovieManagement = () => {
@@ -53,17 +48,13 @@ const MovieManagement = () => {
   useEffect(() => {
     fetchMovies();
   }, []);
-
   const fetchMovies = async () => {
     try {
       setLoading(true);
-      const response = await getMovies();
+      const response = await movieAPI.getMovies();
       console.log("Movies response:", response);
-      if (
-        response.data.status === "success" &&
-        Array.isArray(response.data.data.movies)
-      ) {
-        setMovies(response.data.data.movies);
+      if (response.data?.movies && Array.isArray(response.data.movies)) {
+        setMovies(response.data.movies);
       } else {
         setError("Invalid data format received");
       }
@@ -80,7 +71,7 @@ const MovieManagement = () => {
       if (!validateForm()) {
         return;
       }
-      await createMovie(newMovie as IMovie);
+      await movieAPI.createMovie(newMovie as IMovie);
       setSnackbar({
         open: true,
         message: "Movie created successfully",
@@ -103,10 +94,7 @@ const MovieManagement = () => {
         return;
       }
 
-      await updateMovie({
-        ...newMovie,
-        _id: editMovie._id,
-      } as IMovie);
+      await movieAPI.updateMovie(editMovie._id, newMovie);
 
       setSnackbar({
         open: true,
@@ -127,7 +115,7 @@ const MovieManagement = () => {
   const handleDeleteMovie = async (movieId: string) => {
     if (window.confirm("Are you sure you want to delete this movie?")) {
       try {
-        await deleteMovie(movieId);
+        await movieAPI.deleteMovie(movieId);
         fetchMovies();
       } catch (error) {
         console.error("Failed to delete movie:", error);

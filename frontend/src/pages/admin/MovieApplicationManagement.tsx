@@ -11,11 +11,7 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import {
-  getMovieApplications,
-  updateApplicationStatus,
-} from "../../api/movieApplicationApi";
-import { createMovie } from "../../api/movieApi";
+import { movieApplicationAPI } from "@/services/api";
 
 const MovieApplicationManagement = () => {
   const [applications, setApplications] = useState([]);
@@ -26,7 +22,7 @@ const MovieApplicationManagement = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await getMovieApplications();
+      const response = await movieApplicationAPI.getApplications();
       setApplications(response.data);
     } catch (error) {
       console.error("Failed to fetch applications:", error);
@@ -35,8 +31,7 @@ const MovieApplicationManagement = () => {
 
   const handleApprove = async (application) => {
     try {
-      await updateApplicationStatus(application._id, "approved");
-      await createMovie(application);
+      await movieApplicationAPI.updateStatus(application._id, "approved");
       fetchApplications();
     } catch (error) {
       console.error("Failed to approve application:", error);
@@ -45,7 +40,7 @@ const MovieApplicationManagement = () => {
 
   const handleReject = async (applicationId) => {
     try {
-      await updateApplicationStatus(applicationId, "rejected");
+      await movieApplicationAPI.updateStatus(applicationId, "rejected");
       fetchApplications();
     } catch (error) {
       console.error("Failed to reject application:", error);

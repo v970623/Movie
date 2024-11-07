@@ -8,7 +8,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { submitMovieApplication } from "../api/movieApplicationApi";
+import { movieApplicationAPI } from "../services/api";
 import imageCompression from "browser-image-compression";
 
 const MovieApplicationForm = () => {
@@ -106,7 +106,7 @@ const MovieApplicationForm = () => {
       if (selectedFile) {
         posterUrl = (await compressImage(selectedFile)) as string;
       }
-      await submitMovieApplication({
+      await movieApplicationAPI.submitApplication({
         ...formData,
         posterUrl,
         price: Number(formData.price),

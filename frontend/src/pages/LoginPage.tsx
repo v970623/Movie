@@ -59,10 +59,10 @@ const LoginPage = () => {
             lineHeight: 1.6,
           }}
         >
-          Welcome to our Online Application Management System. Here you can
-          easily submit applications, track progress, and communicate with our
-          staff in real-time. We provide convenient file upload features to make
-          your application process smoother.
+          Welcome to our movie rental website. Here, you can easily browse and
+          rent a variety of movies, enjoying a high-quality viewing experience.
+          We offer convenient search and recommendation features to help you
+          quickly find your favorite films.
         </Typography>
       </Grid>
 

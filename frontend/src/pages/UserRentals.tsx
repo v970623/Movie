@@ -10,7 +10,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import { rentalApi } from "../api/rentalApi";
+import { rentalAPI } from "../services/api";
 
 const UserRentals = () => {
   const [rentals, setRentals] = useState([]);
@@ -18,8 +18,8 @@ const UserRentals = () => {
   useEffect(() => {
     const fetchRentals = async () => {
       try {
-        const response = await rentalApi.getRentals();
-        setRentals(response.data.data || []);
+        const response = await rentalAPI.getRentals();
+        setRentals(response.data || []);
       } catch (error) {
         console.error("Failed to fetch rentals:", error);
       }

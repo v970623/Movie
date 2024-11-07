@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, DatePicker, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { createRental } from "../services/rentalService";
+import { rentalAPI } from "../services/api";
 import { IMovie } from "../types/movie";
 import type { UploadFile } from "antd/es/upload/interface";
 
@@ -27,7 +27,7 @@ const RentalForm: React.FC<RentalFormProps> = ({ movie, onSuccess }) => {
         formData.append("photo", fileList[0].originFileObj);
       }
 
-      await createRental(formData);
+      await rentalAPI.createRental(formData);
       message.success("Rental application submitted successfully!");
       onSuccess();
     } catch (error) {

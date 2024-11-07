@@ -49,8 +49,9 @@ const RegisterPage = () => {
             lineHeight: 1.6,
           }}
         >
-          Create your account to start submitting applications and accessing our
-          services. Join our platform to manage your applications efficiently.
+          Create your account to start browsing and renting a variety of movies.
+          Join our platform to enjoy a high-quality viewing experience and
+          manage your rentals efficiently.
         </Typography>
       </Grid>
 

@@ -1,32 +1,138 @@
-import axios from "axios";
+import request from "../utils/request";
+import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../tsconfig.json";
+import imageCompression from "browser-image-compression";
 
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-});
+interface LoginData {
+  username: string;
+  password?: string;
+}
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+  code?: string;
+}
+
+interface MovieData {
+  title: string;
+  description: string;
+  genre: string[];
+  posterUrl: string;
+  price: number;
+  status: string;
+}
+
+interface RentalData {
+  movieId: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface MovieApplicationData {
+  title: string;
+  actorsOrDirectors: string;
+  posterUrl: string;
+  price: number;
+  genre: string[];
+}
+
+// Auth API
+export const authAPI = {
+  login: async (data: LoginData) => {
+    const response = await request.post("/auth/login", data);
+    if (response.token) {
+      localStorage.setItem("token", response.token);
     }
-    return config;
+    return response;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userRole");
-      window.location.href = "/login";
+  register: (data: RegisterData) => request.post("/auth/register", data),
+
+  logout: () => {
+    localStorage.removeItem("token");
+  },
+};
+
+// Movie API
+export const movieAPI = {
+  getMovies: async () => {
+    const response = await request.get("/movies");
+    return {
+      data: {
+        movies: response.data.movies || [],
+      },
+    };
+  },
+  getMovieById: (id: string) => request.get(`/movies/${id}`),
+
+  createMovie: (data: MovieData) => request.post("/movies", data),
+
+  updateMovie: (id: string, data: Partial<MovieData>) =>
+    request.put(`/movies/${id}`, data),
+
+  deleteMovie: (id: string) => request.delete(`/movies/${id}`),
+};
+
+// Rental API
+export const rentalAPI = {
+  getRentals: () => request.get("/rentals"),
+
+  getAllRentals: () => request.get("/rentals/admin"),
+
+  createRental: (data: RentalData) => request.post("/rentals", data),
+
+  updateRentalStatus: (id: string, status: string) =>
+    request.put(`/rentals/status`, { rentalId: id, status }),
+};
+
+// Movie Application API
+export const movieApplicationAPI = {
+  submitApplication: async (data: MovieApplicationData) => {
+    return request.post("/movie-applications/submit", data, {
+      timeout: 10000,
+    });
+  },
+
+  getApplications: () => request.get("/movie-applications"),
+
+  updateStatus: (id: string, status: "approved" | "rejected") =>
+    request.patch(`/movie-applications/${id}/status`, { status }),
+};
+
+// Attachment API
+export const attachmentAPI = {
+  uploadImage: async (file: File, options = { compress: true }) => {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      throw new Error("Only JPG/PNG images are supported");
     }
-    return Promise.reject(error);
-  }
-);
 
-export default api;
+    if (file.size > MAX_FILE_SIZE) {
+      throw new Error("File size cannot exceed 5MB");
+    }
+
+    let imageFile = file;
+
+    if (options.compress) {
+      const compressOptions = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        initialQuality: 0.8,
+      };
+      imageFile = await imageCompression(file, compressOptions);
+    }
+
+    const formData = new FormData();
+    formData.append("file", imageFile);
+
+    const response = await request.post("/attachments/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      timeout: 30000,
+    });
+
+    return response.url;
+  },
+};

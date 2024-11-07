@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
+import { authAPI } from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 import {
   TextField,
@@ -107,8 +107,8 @@ export const LoginForm = () => {
     setLoading(true);
 
     try {
-      const response = await loginUser(username, password);
-      const token = response.data.token;
+      const response = await authAPI.login({ username, password });
+      const token = response.token;
 
       localStorage.setItem("token", token);
 

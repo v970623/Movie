@@ -11,9 +11,8 @@ import {
   CardActions,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5001/api/movies";
+import { movieAPI } from "../services/api";
 
 import { IMovie } from "../types/movie";
 
@@ -23,13 +22,8 @@ const MovieList: React.FC = () => {
 
   const fetchMovies = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${API_BASE_URL}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setMovies(response.data.data.movies);
+      const response = await movieAPI.getMovies();
+      setMovies(response.data.movies);
     } catch (error) {
       console.error("Failed to fetch movies:", error);
     }

@@ -22,8 +22,11 @@
     "strictNullChecks": true,
     "removeComments": false,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "traceResolution": true
   },
   "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.node.json" }],
+  "ALLOWED_IMAGE_TYPES": ["image/jpeg", "image/png", "image/gif"],
+  "MAX_FILE_SIZE": 5242880
 }
