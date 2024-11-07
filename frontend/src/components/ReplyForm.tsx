@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Snackbar, Alert } from "@mui/material";
 import { replyToUserMessage } from "../api/messageApi";
 
-const ReplyForm = ({ userId }) => {
+const ReplyForm = ({ userId }: { userId: string }) => {
   const [replyMessage, setReplyMessage] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,

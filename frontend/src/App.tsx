@@ -17,6 +17,8 @@ import UserRentals from "./pages/UserRentals";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import MovieManagement from "./pages/admin/MovieManagement";
+import MessageForm from "./components/MessageForm";
+import ReplyForm from "./components/ReplyForm";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { useContext, useEffect } from "react";
 import { AuthContext } from "./context/AuthContext";
@@ -120,6 +122,9 @@ function App() {
 
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
+
+                <Route path="/messages" element={<MessageForm />} />
+                <Route path="/reply/:userId" element={<ReplyForm />} />
 
                 <Route path="/" element={<Navigate to="/movies" replace />} />
                 <Route path="/auth/success" element={<OAuthCallback />} />

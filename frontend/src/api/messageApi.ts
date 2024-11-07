@@ -1,25 +1,17 @@
 import axios from "axios";
-const getAuthHeaders = () => {
+
+const API_BASE_URL = "http://localhost:5001/api/messages";
+
+export const sendMessageToAdmin = async (data: { content: string }) => {
   const token = localStorage.getItem("token");
-  return {
-    Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json",
-  };
+  return axios.post(`${API_BASE_URL}/send`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+  });
 };
 
-export const sendMessageToAdmin = async ({
-  userId,
-  message,
-}: {
-  userId: string;
-  message: string;
-}) => {
-  return axios.post(
-    "http://localhost:5001/api/messages",
-    { userId, message },
-    { headers: getAuthHeaders() }
-  );
-};
 export const replyToUserMessage = async ({
   userId,
   replyMessage,
@@ -27,9 +19,15 @@ export const replyToUserMessage = async ({
   userId: string;
   replyMessage: string;
 }) => {
+  const token = localStorage.getItem("token");
   return axios.post(
-    "http://localhost:5001/api/messages/reply",
+    `${API_BASE_URL}/reply`,
     { userId, replyMessage },
-    { headers: getAuthHeaders() }
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    }
   );
 };

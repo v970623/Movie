@@ -12,6 +12,8 @@ import {
   VideoLibrary as RentalIcon,
   AdminPanelSettings as AdminIcon,
   Logout as LogoutIcon,
+  Message as MessageIcon,
+  Reply as ReplyIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
@@ -51,6 +53,7 @@ const Navbar = () => {
               <Button
                 color="inherit"
                 onClick={() => navigate("/movies")}
+                startIcon={<MovieIcon />}
                 sx={{ textTransform: "none" }}
               >
                 Movies
@@ -61,6 +64,13 @@ const Navbar = () => {
                 onClick={() => navigate("/my-rentals")}
               >
                 My Rentals
+              </Button>
+              <Button
+                color="inherit"
+                startIcon={<MessageIcon />}
+                onClick={() => navigate("/messages")}
+              >
+                Message Admin
               </Button>
             </>
           )}
@@ -80,6 +90,13 @@ const Navbar = () => {
                 startIcon={<RentalIcon />}
               >
                 Rental Management
+              </Button>
+              <Button
+                color="inherit"
+                startIcon={<ReplyIcon />}
+                onClick={() => navigate("/reply/:userId")}
+              >
+                Reply to Users
               </Button>
             </>
           )}

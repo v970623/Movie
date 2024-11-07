@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { TextField, Button, Snackbar, Alert } from "@mui/material";
 import { sendMessageToAdmin } from "../api/messageApi";
 
-const UserRentals = () => {
+const MessageForm = () => {
   const [message, setMessage] = useState("");
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -12,7 +12,7 @@ const UserRentals = () => {
 
   const handleSendMessage = async () => {
     try {
-      await sendMessageToAdmin({ userId: "currentUserId", message });
+      await sendMessageToAdmin({ content: message });
       setSnackbar({
         open: true,
         message: "Message sent successfully",
@@ -55,3 +55,5 @@ const UserRentals = () => {
     </div>
   );
 };
+
+export default MessageForm;
