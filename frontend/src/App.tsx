@@ -135,7 +135,7 @@ function AppContent() {
               }
             />
             <Route
-              path="/admin/movie-applications"
+              path="/admin/applications"
               element={
                 <ProtectedRoute requireRole="staff">
                   <MovieApplicationManagement />

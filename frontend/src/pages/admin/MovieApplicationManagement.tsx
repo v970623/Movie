@@ -9,6 +9,7 @@ import {
   Button,
   Grid,
   Chip,
+  Tooltip,
 } from "@mui/material";
 import {
   getMovieApplications,
@@ -32,7 +33,7 @@ const MovieApplicationManagement = () => {
     }
   };
 
-  const handleApprove = async (application: any) => {
+  const handleApprove = async (application) => {
     try {
       await updateApplicationStatus(application._id, "approved");
       await createMovie(application);
@@ -42,7 +43,7 @@ const MovieApplicationManagement = () => {
     }
   };
 
-  const handleReject = async (applicationId: string) => {
+  const handleReject = async (applicationId) => {
     try {
       await updateApplicationStatus(applicationId, "rejected");
       fetchApplications();
@@ -60,49 +61,73 @@ const MovieApplicationManagement = () => {
         {applications.map((application) => (
           <Grid item xs={12} md={6} key={application._id}>
             <Card>
-              <CardMedia
-                component="img"
-                height="200"
-                image={application.posterUrl}
-                alt={application.title}
-              />
+              <Tooltip
+                PopperProps={{
+                  modifiers: [
+                    {
+                      name: "zIndex",
+                      enabled: true,
+                      options: { zIndex: 1300 },
+                    },
+                  ],
+                }}
+                title={
+                  <img
+                    src={application.posterUrl}
+                    alt={application.title}
+                    style={{ width: "200%" }}
+                  />
+                }
+              >
+                <CardMedia
+                  component="img"
+                  height="200"
+                  image={application.posterUrl}
+                  alt={application.title}
+                />
+              </Tooltip>
               <CardContent>
-                <Typography variant="h6">{application.title}</Typography>
+                <Typography variant="h6">Title: {application.title}</Typography>
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
-                  {application.actorsOrDirectors}
+                  Actors/Directors: {application.actorsOrDirectors}
                 </Typography>
                 <Box sx={{ mb: 2 }}>
                   {application.genre.map((genre) => (
                     <Chip
                       key={genre}
-                      label={genre}
+                      label={`Genre: ${genre}`}
                       size="small"
                       sx={{ mr: 1, mb: 1 }}
                     />
                   ))}
                 </Box>
                 <Typography variant="h6" color="primary">
-                  ${application.price}/day
+                  Price: ${application.price}/day
                 </Typography>
-                {application.status === "pending" && (
-                  <Box sx={{ mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => handleApprove(application)}
-                      sx={{ mr: 1 }}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleReject(application._id)}
-                    >
-                      Reject
-                    </Button>
-                  </Box>
-                )}
+                <Typography variant="body2" color="text.secondary">
+                  Status: {application.status}
+                </Typography>
+                <Box sx={{ mt: 2 }}>
+                  {application.status === "pending" && (
+                    <>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleApprove(application)}
+                        sx={{ mr: 1 }}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleReject(application._id)}
+                      >
+                        Reject
+                      </Button>
+                    </>
+                  )}
+                </Box>
               </CardContent>
             </Card>
           </Grid>
