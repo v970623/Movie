@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5001/api";
+const API_BASE_URL = "http://localhost:5001/api/rentals";
 
 interface RentalData {
   movieId: string;
@@ -8,19 +8,19 @@ interface RentalData {
   endDate: string;
 }
 
-export const createRental = async (data: RentalData) => {
+export const createRental = async (formData: FormData) => {
   const token = localStorage.getItem("token");
-  return axios.post(`${API_BASE_URL}/rentals`, data, {
+  return axios.post(`${API_BASE_URL}`, formData, {
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
+      "Content-Type": "multipart/form-data",
     },
   });
 };
 
 export const getRentals = async () => {
   const token = localStorage.getItem("token");
-  return axios.get(`${API_BASE_URL}/rentals`, {
+  return axios.get(`${API_BASE_URL}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -30,7 +30,7 @@ export const getRentals = async () => {
 export const updateRentalStatus = async (rentalId: string, status: string) => {
   const token = localStorage.getItem("token");
   return axios.put(
-    `${API_BASE_URL}/rentals/status`,
+    `${API_BASE_URL}/status`,
     { rentalId, status },
     {
       headers: {
@@ -42,7 +42,7 @@ export const updateRentalStatus = async (rentalId: string, status: string) => {
 };
 export const getAllRentals = async () => {
   const token = localStorage.getItem("token");
-  return axios.get(`${API_BASE_URL}/rentals/all`, {
+  return axios.get(`${API_BASE_URL}/all`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
