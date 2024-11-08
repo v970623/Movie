@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Message as MessageIcon } from "@mui/icons-material";
-import { sendMessageToAdmin } from "../api/messageApi";
+import { messageAPI } from "../services/api";
 
 const MessageForm = () => {
   const [open, setOpen] = useState(false);
@@ -23,7 +23,7 @@ const MessageForm = () => {
 
   const handleSendMessage = async () => {
     try {
-      await sendMessageToAdmin({ content: message });
+      await messageAPI.sendMessageToAdmin({ content: message });
       setMessage("");
       setOpen(false);
       setSnackbar({

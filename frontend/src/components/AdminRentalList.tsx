@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag, Button, message, Space } from "antd";
-import { getAllRentals, updateRentalStatus } from "../services/rentalService";
+import { rentalAPI } from "../services/api";
 
 interface Rental {
   _id: string;
@@ -22,7 +22,7 @@ const AdminRentalList = () => {
   const fetchAllRentals = async () => {
     try {
       setLoading(true);
-      const response = await getAllRentals();
+      const response = await rentalAPI.getAllRentals();
       setRentals(response.data.data);
     } catch (error) {
       console.error("Failed to fetch rentals:", error);
@@ -38,7 +38,7 @@ const AdminRentalList = () => {
 
   const handleStatusUpdate = async (rentalId: string, status: string) => {
     try {
-      await updateRentalStatus(rentalId, status);
+      await rentalAPI.updateRentalStatus(rentalId, status);
       message.success("Status updated successfully");
       fetchAllRentals();
     } catch (error) {

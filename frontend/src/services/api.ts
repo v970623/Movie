@@ -1,6 +1,7 @@
 import request from "../utils/request";
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../tsconfig.json";
 import imageCompression from "browser-image-compression";
+import axios from "axios";
 
 interface LoginData {
   username: string;
@@ -134,5 +135,17 @@ export const attachmentAPI = {
     });
 
     return response.url;
+  },
+};
+
+// Message API
+export const messageAPI = {
+  sendMessageToAdmin: async (data: { content: string }) => {
+    try {
+      const response = await request.post("/messages/send", data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   },
 };
