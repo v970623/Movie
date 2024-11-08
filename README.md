@@ -1,203 +1,100 @@
-# Movie
+Movie Rental System
 
-## Detailed Installation Guide
+Overview
 
-### Prerequisites
+A full-stack movie rental application that includes user authentication, movie management, and rental tracking features.
 
-- Node.js (v14 or higher)
-- MongoDB (v4.4 or higher)
-- Google Cloud Console account
-- SMTP email service account
+Features
 
-### Step-by-Step Setup
+    •	User Authentication with role-based access control
+    •	Movie Management (CRUD operations)
+    •	External Movie Search via TMDB API
+    •	Rental Management System
+    •	Email Notifications for key events
+    •	Admin Dashboard for monitoring and control
+
+Tech Stack
+
+    •	Backend: Node.js, Express, TypeScript, MongoDB
+    •	Authentication: JWT, Passport
+    •	Database: MongoDB with Mongoose
+    •	API Integration: TMDB API
+
+Setup and Installation
 
 1. Clone the repository
+   git clone <https://github.com/v970623/Movie.git>
 
-```bash
-git clone <https://github.com/v970623/Movie.git>
-cd Movie
-```
+2. Install dependencies
 
-2. Install dependencies for both frontend and backend
+   cd backend
+   npm install
+   cd frontend
+   npm install
 
-```bash
-# Install backend dependencies
-cd backend
-npm install
+3. Environment Configuration
 
-# Install frontend dependencies
-cd ../frontend
-npm install
-```
+Create a .env file in the backend directory:
 
-3. Environment Variables Configuration
+    MAIL_HOST=your_mail_host
+    MAIL_PORT=your_mail_port
+    MAIL_USERNAME=your_mail_username
+    MAIL_PASSWORD=your_mail_password
+    MAIL_FROM=your_mail_from
+    MAIL_TO=your_mail_to
 
-Create `.env` files in both backend and frontend directories:
+    NODE_ENV=your_node_env
 
-**Backend (.env)**:
+    GOOGLE_CLIENT_ID=your_google_client_id
+    GOOGLE_CLIENT_SECRET=your_google_client_secret
+    GOOGLE_CALLBACK_URL=your_google_callback_url
 
-```plaintext
-# Server Configuration
-PORT=5000
-NODE_ENV=development
+    JWT_SECRET=your_jwt_secret
+    API_KEY=your_api_key
 
-# MongoDB
-MONGODB_URI=mongodb://localhost:27017/movie
+4. Database Initialization
 
-# JWT Configuration
-JWT_SECRET=your_jwt_secret_key
-JWT_EXPIRES_IN=24h
+   npm run init-db
+   npm run init-movies
 
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_CALLBACK_URL=http://localhost:5000/api/auth/google/callback
+This command will populate the database with initial data, such as:{
+"title": "The Shawshank Redemption",
+"description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+"genre": ["Drama"],
+"posterUrl": "https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_.jpg",
+"price": 4.99,
+"status": "available"
+}
 
-# Email Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=your_email@gmail.com
-SMTP_PASS=your_email_app_password
-```
+5.API Routes
 
-**Frontend (.env)**:
+Movie Routes
+| Method | Endpoint | Description |
+|--------|--------------------|--------------------------|
+| GET | /search | Search movies via TMDB |
+| GET | /:id | Get movie by ID |
+| GET | / | Get all movies |
+| PUT | /:id | Update a movie |
+| POST | /save-selected | Save selected movies |
+| POST | /movie | Create a new movie |
+| DELETE | /:id | Delete a movie |
+| PUT | /:id/availability | Update movie availability |
 
-```plaintext
-REACT_APP_API_URL=http://localhost:5001/api
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
-```
+Rental Routes
 
-## Project Structure
+    | Method | Endpoint           | Description              |
+    |--------|--------------------|--------------------------|
+    | POST   | /                  | Create a new rental       |
+    | GET    | /                  | Get rentals for a user   |
+    | GET    | /admin             | Get all rentals for admin |
+    | PUT    | /status            | Update rental status     |
 
-```plaintext
-Movie/
-├── backend/
-│   ├── src/
-│   │   ├── config/          # Configuration files
-│   │   ├── controllers/     # Request handlers
-│   │   ├── models/          # Database models
-│   │   ├── routes/          # API routes
-│   │   ├── middleware/      # Custom middleware
-│   │   └── index.ts         # Entry point
-│   └── package.json
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   ├── utils/          # Utility functions
-│   │   └── App.tsx         # Root component
-│   └── package.json
-```
+6.Scripts
 
-## API Documentation
-
-### Authentication Endpoints
-
-```plaintext
-POST /api/auth/register
-- Register new user
-- Body: { email, password, name }
-
-POST /api/auth/login
-- Login with email/password
-- Body: { email, password }
-
-GET /api/auth/google
-- Initiate Google OAuth flow
-
-GET /api/auth/google/callback
-- Google OAuth callback handler
-```
-
-### Application Endpoints
-
-```plaintext
-POST /api/applications
-- Submit new application
-- Auth required
-- Body: { hallName, capacity, facilities, preferredDates }
-
-GET /api/applications
-- Get all applications (staff only)
-- Auth required
-
-GET /api/applications/:id
-- Get specific application
-- Auth required
-
-PATCH /api/applications/:id
-- Update application status
-- Staff auth required
-- Body: { status, comments }
-```
-
-### User Endpoints
-
-```plaintext
-GET /api/users/profile
-- Get current user profile
-- Auth required
-
-PATCH /api/users/profile
-- Update user profile
-- Auth required
-- Body: { name, phone, organization }
-```
-
-## Development
-
-1. Start MongoDB service
-
-2. Start backend server:
-
-```bash
-cd backend
-npm run dev
-```
-
-3. Start frontend development server:
-
-```bash
-cd frontend
-npm start
-```
-
-The application will be available at:
-
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5001
-
-## Production Deployment
-
-1. Build the frontend:
-
-```bash
-cd frontend
-npm run build
-```
-
-2. Build the backend:
-
-```bash
-cd backend
-npm run build
-```
-
-3. Set environment variables for production
-
-4. Start the production server:
-
-```bash
-cd backend
-npm start
-```
-
-## Security Considerations
-
-- All API endpoints (except auth) require JWT authentication
-- Passwords are hashed using bcrypt
-- CORS is configured for security
-- Rate limiting is implemented on auth routes
-- Input validation using express-validator
+    | Command         | Description                        |
+    |-----------------|------------------------------------|
+    | npm run dev     | Start development server           |
+    | npm run build   | Build the project                  |
+    | npm run init-db     | Initialize database with sample data|
+    | npm run init-movies | Initialize database with movie data |
+    | npm test        | Run tests                          |
