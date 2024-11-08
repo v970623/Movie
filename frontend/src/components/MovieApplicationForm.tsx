@@ -8,7 +8,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { movieApplicationAPI } from "../services/api";
+import { movieApplicationAPI } from "../api/api";
 import imageCompression from "browser-image-compression";
 
 const MovieApplicationForm = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, DatePicker, Button, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import { rentalAPI } from "../services/api";
+import { rentalAPI } from "../api/api";
 import { IMovie } from "../types/movie";
 import type { UploadFile } from "antd/es/upload/interface";
 

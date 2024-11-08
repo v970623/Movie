@@ -1,7 +1,7 @@
 import request from "../utils/request";
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../tsconfig.json";
 import imageCompression from "browser-image-compression";
-import axios from "axios";
+import { searchMovie } from "../services/movieService";
 
 interface LoginData {
   username: string;
@@ -73,6 +73,16 @@ export const movieAPI = {
     request.put(`/movies/${id}`, data),
 
   deleteMovie: (id: string) => request.delete(`/movies/${id}`),
+
+  searchMovie: async (query: string) => {
+    try {
+      const movies = await searchMovie(query);
+      return movies;
+    } catch (error) {
+      console.error("Error searching movies:", error);
+      throw error;
+    }
+  },
 };
 
 // Rental API

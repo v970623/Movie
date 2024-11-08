@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../services/api";
+import { authAPI } from "../api/api";
 import { AuthContext } from "../context/AuthContext";
 import {
   TextField,

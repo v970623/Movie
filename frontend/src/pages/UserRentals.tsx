@@ -10,7 +10,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import { rentalAPI } from "../services/api";
+import { rentalAPI } from "../api/api";
 
 const UserRentals = () => {
   const [rentals, setRentals] = useState([]);

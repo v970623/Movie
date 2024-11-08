@@ -20,7 +20,7 @@ import {
   Snackbar,
   Alert,
 } from "@mui/material";
-import { movieAPI } from "../../services/api";
+import { movieAPI } from "../../api/api";
 import { IMovie } from "../../types/movie";
 import AddIcon from "@mui/icons-material/Add";
 

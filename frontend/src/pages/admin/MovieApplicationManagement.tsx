@@ -11,7 +11,7 @@ import {
   Chip,
   Tooltip,
 } from "@mui/material";
-import { movieApplicationAPI } from "@/services/api";
+import { movieApplicationAPI } from "@/api/api";
 
 const MovieApplicationManagement = () => {
   const [applications, setApplications] = useState([]);

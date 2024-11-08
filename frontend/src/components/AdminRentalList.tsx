@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Tag, Button, message, Space } from "antd";
-import { rentalAPI } from "../services/api";
+import { rentalAPI } from "../api/api";
 
 interface Rental {
   _id: string;

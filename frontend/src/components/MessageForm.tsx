@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { Message as MessageIcon } from "@mui/icons-material";
-import { messageAPI } from "../services/api";
+import { messageAPI } from "../api/api";
 
 const MessageForm = () => {
   const [open, setOpen] = useState(false);

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-import { movieAPI } from "../services/api";
+import { movieAPI } from "../api/api";
 
 import { IMovie } from "../types/movie";
 
