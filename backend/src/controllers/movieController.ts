@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Movie from "../models/movieModel";
 import { handleError } from "../utils/errorHandler";
+import movieService from "../services/movieService";
 
 /**
  * Create a new movie
@@ -163,10 +164,21 @@ export const searchMovies = async (
     if (genre) searchQuery.genre = { $in: [genre] };
     if (director) searchQuery.director = { $regex: director, $options: "i" };
 
-    const movies = await Movie.find(searchQuery)
-      .sort({ createdAt: -1 })
-      .limit(20);
-    res.json({ status: "success", data: movies });
+    // 因为拦截器处理了 response.data，所以这里直接获取的是 data 中的数据
+    const movies = await movieService.searchMovie(query as string);
+    console.log("movies data:", movies);
+    if (!movies || !Array.isArray(movies.results)) {
+      throw new Error("Invalid movie data received");
+    }
+
+    // 直接使用 movies.results，因为拦截器已经将 data 返回
+    const sortedMovies = movies.results.sort(
+      (a: any, b: any) => b.createdAt - a.createdAt
+    );
+    const limitedMovies = sortedMovies.slice(0, 20);
+
+    // 返回结果
+    res.json({ status: "success", data: limitedMovies });
   } catch (error) {
     handleError(res, 500, "Search failed", error);
   }

@@ -9,12 +9,13 @@ interface MovieData {
 
 function MovieSearch() {
   const [title, setTitle] = useState<string>("");
-  const [movieData, setMovieData] = useState<MovieData | null>(null);
+  const [movies, setMovies] = useState<MovieData[]>([]);
 
   const handleSearch = async () => {
     try {
-      const response = await movieAPI.getMovieData({ query: { title } }, {});
-      setMovieData(response.data);
+      const response = await movieAPI.searchMovie(title);
+      console.log("Fetched movies:", response);
+      setMovies(response);
     } catch (error) {
       console.error("Error fetching movie data:", error);
     }
@@ -30,12 +31,25 @@ function MovieSearch() {
       />
       <button onClick={handleSearch}>Search</button>
 
-      {movieData && (
-        <div>
-          <h2>{movieData.title}</h2>
-          <p>Release Date: {movieData.release_date}</p>
-          <p>Overview: {movieData.overview}</p>
-        </div>
+      {movies.length > 0 && (
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Release Date</th>
+              <th>Overview</th>
+            </tr>
+          </thead>
+          <tbody>
+            {movies.map((movie, index) => (
+              <tr key={index}>
+                <td>{movie.title}</td>
+                <td>{movie.release_date}</td>
+                <td>{movie.overview}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

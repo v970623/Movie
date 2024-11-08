@@ -2,7 +2,6 @@ import axios from "axios";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/search/movie";
 const API_KEY = process.env.API_KEY;
-
 const searchMovie = async (query) => {
   try {
     const response = await axios.get(TMDB_API_URL, {
@@ -11,7 +10,7 @@ const searchMovie = async (query) => {
         query,
       },
     });
-    return response.data.results;
+    return response.results;
   } catch (error) {
     console.error("Error fetching movie data:", error);
     throw new Error("Could not fetch movie data");

@@ -1,7 +1,6 @@
 import request from "../utils/request";
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "../../tsconfig.json";
 import imageCompression from "browser-image-compression";
-import { searchMovie } from "../services/movieService";
 
 interface LoginData {
   username: string;
@@ -39,7 +38,7 @@ interface MovieApplicationData {
 }
 
 // Auth API
-export const authAPI = {
+const authAPI = {
   login: async (data: LoginData) => {
     const response = await request.post("/auth/login", data);
     if (response.token) {
@@ -56,7 +55,7 @@ export const authAPI = {
 };
 
 // Movie API
-export const movieAPI = {
+const movieAPI = {
   getMovies: async () => {
     const response = await request.get("/movies");
     return {
@@ -73,20 +72,11 @@ export const movieAPI = {
     request.put(`/movies/${id}`, data),
 
   deleteMovie: (id: string) => request.delete(`/movies/${id}`),
-
-  searchMovie: async (query: string) => {
-    try {
-      const movies = await searchMovie(query);
-      return movies;
-    } catch (error) {
-      console.error("Error searching movies:", error);
-      throw error;
-    }
-  },
+  searchMovie: (query: string) => request.get(`/movies/search?query=${query}`),
 };
 
 // Rental API
-export const rentalAPI = {
+const rentalAPI = {
   getRentals: () => request.get("/rentals"),
 
   getAllRentals: () => request.get("/rentals/admin"),
@@ -98,7 +88,7 @@ export const rentalAPI = {
 };
 
 // Movie Application API
-export const movieApplicationAPI = {
+const movieApplicationAPI = {
   submitApplication: async (data: MovieApplicationData) => {
     return request.post("/movie-applications/submit", data, {
       timeout: 10000,
@@ -112,7 +102,7 @@ export const movieApplicationAPI = {
 };
 
 // Attachment API
-export const attachmentAPI = {
+const attachmentAPI = {
   uploadImage: async (file: File, options = { compress: true }) => {
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       throw new Error("Only JPG/PNG images are supported");
@@ -149,7 +139,7 @@ export const attachmentAPI = {
 };
 
 // Message API
-export const messageAPI = {
+const messageAPI = {
   sendMessageToAdmin: async (data: { content: string }) => {
     try {
       const response = await request.post("/messages/send", data);
@@ -158,4 +148,13 @@ export const messageAPI = {
       throw error;
     }
   },
+};
+
+export {
+  authAPI,
+  movieAPI,
+  rentalAPI,
+  movieApplicationAPI,
+  attachmentAPI,
+  messageAPI,
 };

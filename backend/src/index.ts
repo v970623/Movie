@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -11,8 +13,6 @@ import path from "path";
 import fs from "fs";
 import passport from "passport";
 import configurePassport from "./config/passport";
-import dotenv from "dotenv";
-dotenv.config();
 
 const app = express();
 const PORT = 5001;
@@ -33,6 +33,7 @@ app.use(
 );
 
 app.options("*", cors());
+// Passport config
 app.use(passport.initialize());
 configurePassport();
 
