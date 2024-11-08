@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { IUser } from "../types/user";
-import { Document } from "mongoose";
+import { handleError } from "../utils/errorHandler";
 
 const JWT_SECRET = "12345678";
 
@@ -25,7 +25,7 @@ export const authenticate = (
   const token = req.header("Authorization")?.replace("Bearer ", "");
 
   if (!token) {
-    res.status(401).json({ error: "Access denied" });
+    handleError(res, 401, "Access denied");
     return;
   }
 
@@ -34,8 +34,7 @@ export const authenticate = (
     req.user = decoded as IUserWithId;
     next();
   } catch (error) {
-    console.error("Token verification error:", error);
-    res.status(401).json({ error: "Invalid token" });
+    handleError(res, 401, "Invalid token", error);
   }
 };
 
@@ -47,7 +46,7 @@ export const isStaff = (
   if ((req.user as IUserWithId)?.role === "staff") {
     next();
   } else {
-    res.status(403).json({ error: "Staff access required" });
+    handleError(res, 403, "Staff access required");
     return;
   }
 };

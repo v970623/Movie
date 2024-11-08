@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import User from "../models/userModel";
 import { oauth2Client } from "../config/googleAuth";
 import { google } from "googleapis";
+import { generateToken } from "../utils/tokenUtils";
+import { handleError } from "../utils/errorHandler";
 
-const JWT_SECRET = "12345678";
 const STAFF_CODE = "9999";
 
 type AsyncRequestHandler = (req: Request, res: Response) => Promise<void>;
+
 export const register: AsyncRequestHandler = async (req, res) => {
   const { username, password, email, code } = req.body;
   try {
@@ -30,8 +31,8 @@ export const register: AsyncRequestHandler = async (req, res) => {
       message: "User registration successful",
       role,
     });
-  } catch (error) {
-    res.status(400).json({ error: "Registration failed" });
+  } catch (error: any) {
+    handleError(res, 500, "Registration failed", error);
   }
 };
 
@@ -51,22 +52,14 @@ export const login: AsyncRequestHandler = async (req, res) => {
         return;
       }
     }
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = generateToken(user);
 
     res.json({
       token,
       role: user.role,
     });
-  } catch (error) {
-    console.error("Login error:", error);
-    res.status(400).json({ error: "Login failed" });
+  } catch (error: any) {
+    handleError(res, 500, "Login failed", error);
   }
 };
 
@@ -114,15 +107,11 @@ export const googleCallback = async (req: Request, res: Response) => {
       }
     }
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      process.env.JWT_SECRET || "12345678",
-      { expiresIn: "1h" }
-    );
+    const token = generateToken(user);
 
     res.redirect(`http://localhost:3000/auth/success?token=${token}`);
-  } catch (error) {
-    console.error("Google auth error:", error);
+  } catch (error: any) {
+    handleError(res, 500, "Google auth error", error);
     res.redirect("http://localhost:3000/login?error=auth_failed");
   }
 };

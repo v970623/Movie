@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Movie from "../models/movieModel";
+import { handleError } from "../utils/errorHandler";
 
 /**
  * Create a new movie
@@ -11,30 +12,11 @@ export const createMovie = async (
   res: Response
 ): Promise<void> => {
   try {
-    const movieData: any = {
-      title: req.body.title,
-      description: req.body.description,
-      releaseYear: req.body.releaseYear,
-      status: req.body.status || "available",
-      actors: req.body.actors,
-      price: req.body.price,
-      posterUrl: req.body.posterUrl,
-      director: req.body.director,
-    };
-
-    if (req.body.genre) movieData.genre = req.body.genre;
-
+    const movieData = { ...req.body, status: req.body.status || "available" };
     const movie = await Movie.create(movieData);
-    res.status(201).json({
-      status: "success",
-      data: movie,
-    });
+    res.status(201).json({ status: "success", data: movie });
   } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: "Failed to create movie",
-      error: error,
-    });
+    handleError(res, 400, "Failed to create movie", error);
   }
 };
 
@@ -52,22 +34,13 @@ export const updateMovie = async (
       new: true,
       runValidators: true,
     });
-
     if (!movie) {
-      res.status(404).json({ error: "Movie not found" });
+      handleError(res, 404, "Movie not found");
       return;
     }
-
-    res.json({
-      status: "success",
-      data: movie,
-    });
+    res.json({ status: "success", data: movie });
   } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: "Failed to update movie",
-      error: error,
-    });
+    handleError(res, 400, "Failed to update movie", error);
   }
 };
 
@@ -82,22 +55,13 @@ export const deleteMovie = async (
 ): Promise<void> => {
   try {
     const movie = await Movie.findByIdAndDelete(req.params.id);
-
     if (!movie) {
-      res.status(404).json({ error: "Movie not found" });
+      handleError(res, 404, "Movie not found");
       return;
     }
-
-    res.json({
-      status: "success",
-      message: "Movie deleted successfully",
-    });
+    res.json({ status: "success", message: "Movie deleted successfully" });
   } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: "Failed to delete movie",
-      error: error,
-    });
+    handleError(res, 400, "Failed to delete movie", error);
   }
 };
 
@@ -116,22 +80,13 @@ export const updateMovieAvailability = async (
       { available: req.body.available },
       { new: true }
     );
-
     if (!movie) {
-      res.status(404).json({ error: "Movie not found" });
+      handleError(res, 404, "Movie not found");
       return;
     }
-
-    res.json({
-      status: "success",
-      data: movie,
-    });
+    res.json({ status: "success", data: movie });
   } catch (error) {
-    res.status(400).json({
-      status: "error",
-      message: "Failed to update movie availability",
-      error: error,
-    });
+    handleError(res, 400, "Failed to update movie availability", error);
   }
 };
 
@@ -146,18 +101,12 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
     const genre = req.query.genre as string;
-
-    let query = {};
-
-    if (genre) {
-      query = { genre: { $in: [genre] } };
-    }
+    const query = genre ? { genre: { $in: [genre] } } : {};
 
     const movies = await Movie.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-
     const total = await Movie.countDocuments(query);
 
     res.json({
@@ -172,10 +121,7 @@ export const getMovies = async (req: Request, res: Response): Promise<void> => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Failed to fetch movies",
-    });
+    handleError(res, 500, "Failed to fetch movies", error);
   }
 };
 
@@ -190,22 +136,13 @@ export const getMovieById = async (
 ): Promise<void> => {
   try {
     const movie = await Movie.findById(req.params.id);
-
     if (!movie) {
-      res.status(404).json({ error: "Movie not found" });
+      handleError(res, 404, "Movie not found");
       return;
     }
-
-    res.json({
-      status: "success",
-      data: movie,
-    });
+    res.json({ status: "success", data: movie });
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Failed to fetch movie",
-      error: error,
-    });
+    handleError(res, 500, "Failed to fetch movie", error);
   }
 };
 
@@ -222,31 +159,15 @@ export const searchMovies = async (
     const { query, genre, director } = req.query;
     const searchQuery: any = {};
 
-    if (query) {
-      searchQuery.title = { $regex: query, $options: "i" };
-    }
-
-    if (genre) {
-      searchQuery.genre = { $in: [genre] };
-    }
-
-    if (director) {
-      searchQuery.director = { $regex: director, $options: "i" };
-    }
+    if (query) searchQuery.title = { $regex: query, $options: "i" };
+    if (genre) searchQuery.genre = { $in: [genre] };
+    if (director) searchQuery.director = { $regex: director, $options: "i" };
 
     const movies = await Movie.find(searchQuery)
       .sort({ createdAt: -1 })
       .limit(20);
-
-    res.json({
-      status: "success",
-      data: movies,
-    });
+    res.json({ status: "success", data: movies });
   } catch (error) {
-    res.status(500).json({
-      status: "error",
-      message: "Search failed",
-      error: error,
-    });
+    handleError(res, 500, "Search failed", error);
   }
 };
