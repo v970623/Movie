@@ -10,7 +10,7 @@ const searchMovie = async (query) => {
         query,
       },
     });
-    return response.results;
+    return response.data;
   } catch (error) {
     console.error("Error fetching movie data:", error);
     throw new Error("Could not fetch movie data");

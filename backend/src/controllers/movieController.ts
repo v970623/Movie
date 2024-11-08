@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Movie from "../models/movieModel";
+import { IMovie } from "../models/movieModel";
 import { handleError } from "../utils/errorHandler";
 import movieService from "../services/movieService";
 
@@ -164,21 +165,34 @@ export const searchMovies = async (
     if (genre) searchQuery.genre = { $in: [genre] };
     if (director) searchQuery.director = { $regex: director, $options: "i" };
 
-    // 因为拦截器处理了 response.data，所以这里直接获取的是 data 中的数据
     const movies = await movieService.searchMovie(query as string);
-    console.log("movies data:", movies);
     if (!movies || !Array.isArray(movies.results)) {
       throw new Error("Invalid movie data received");
     }
 
-    // 直接使用 movies.results，因为拦截器已经将 data 返回
-    const sortedMovies = movies.results.sort(
-      (a: any, b: any) => b.createdAt - a.createdAt
-    );
-    const limitedMovies = sortedMovies.slice(0, 20);
+    const formattedMovies = movies.results
+      .map((movie: any) => ({
+        title: movie.title,
+        description: movie.overview,
+        genre: movie.genre_ids.map((id: number) => id.toString()),
+        posterUrl: movie.poster_path
+          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+          : "https://example.com/default-poster.jpg",
+        price: 4.99,
+        status: "available",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
+      .filter((movie: any) => movie.posterUrl);
 
-    // 返回结果
-    res.json({ status: "success", data: limitedMovies });
+    if (formattedMovies.length === 0) {
+      res.status(200).json({ status: "success", data: [] });
+      return;
+    }
+
+    const savedMovies = await Movie.insertMany(formattedMovies);
+
+    res.json({ status: "success", data: savedMovies });
   } catch (error) {
     handleError(res, 500, "Search failed", error);
   }
