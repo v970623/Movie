@@ -13,9 +13,11 @@ import {
   AdminPanelSettings as AdminIcon,
   Logout as LogoutIcon,
   AddCircleOutline as AddIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import MovieSearch from "./MovieSearch";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -97,6 +99,8 @@ const Navbar = () => {
               >
                 Rental Management
               </Button>
+              <Button color="inherit"></Button>
+              <MovieSearch />
             </>
           )}
         </Box>

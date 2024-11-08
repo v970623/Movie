@@ -99,6 +99,14 @@ const movieApplicationAPI = {
 
   updateStatus: (id: string, status: "approved" | "rejected") =>
     request.patch(`/movie-applications/${id}/status`, { status }),
+
+  searchMovies: (params: any) => {
+    return request.get("/movies/search", { params });
+  },
+
+  saveSelectedMovies: async (movies: any[]) => {
+    return request.post("/movies/save-selected", { movies });
+  },
 };
 
 // Attachment API

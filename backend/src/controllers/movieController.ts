@@ -170,30 +170,49 @@ export const searchMovies = async (
       throw new Error("Invalid movie data received");
     }
 
-    const formattedMovies = movies.results
-      .map((movie: any) => ({
-        title: movie.title,
-        description: movie.overview,
-        genre: movie.genre_ids.map((id: number) => id.toString()),
-        posterUrl: movie.poster_path
-          ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-          : "https://example.com/default-poster.jpg",
-        price: 4.99,
-        status: "available",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }))
-      .filter((movie: any) => movie.posterUrl);
+    const formattedMovies = movies.results.map((movie: any) => ({
+      title: movie.title,
+      description: movie.overview,
+      genre: movie.genre_ids.slice(0, 3).join(", "),
+      posterUrl: movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : "https://example.com/default-poster.jpg",
+      price: 4.99,
+      status: "available",
+    }));
 
-    if (formattedMovies.length === 0) {
-      res.status(200).json({ status: "success", data: [] });
+    res.json({ status: "success", data: formattedMovies });
+  } catch (error) {
+    handleError(res, 500, "Search failed", error);
+  }
+};
+
+/**
+ * Save selected movies
+ * @param req Request object containing movies data
+ * @param res Response object
+ */
+export const saveSelectedMovies = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const movies = req.body.movies;
+    if (!Array.isArray(movies) || movies.length === 0) {
+      handleError(res, 400, "Invalid movies data");
       return;
     }
 
-    const savedMovies = await Movie.insertMany(formattedMovies);
+    const savedMovies = await Movie.insertMany(
+      movies.map((movie) => ({
+        ...movie,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }))
+    );
 
     res.json({ status: "success", data: savedMovies });
   } catch (error) {
-    handleError(res, 500, "Search failed", error);
+    handleError(res, 500, "Failed to save movies", error);
   }
 };

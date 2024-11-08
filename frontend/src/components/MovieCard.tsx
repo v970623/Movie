@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, Button, Modal } from "antd";
 import { IMovie } from "../types/movie";
 import RentalForm from "./RentalForm";
-import { getRentals } from "../services/rentalService";
+import { rentalAPI } from "../api/api";
 
 interface MovieCardProps {
   movie: IMovie;
@@ -22,9 +22,15 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onRefresh }) => {
 
   const handleSuccess = async () => {
     setIsModalOpen(false);
-    await getRentals();
+    await rentalAPI.getRentals();
     onRefresh();
   };
+
+  const maxDescriptionLength = 144;
+  const truncatedDescription =
+    movie.description.length > maxDescriptionLength
+      ? movie.description.substring(0, maxDescriptionLength) + "..."
+      : movie.description;
 
   return (
     <>
@@ -45,7 +51,7 @@ const MovieCard: React.FC<MovieCardProps> = ({ movie, onRefresh }) => {
           title={movie.title}
           description={
             <>
-              <p>{movie.description}</p>
+              <p>{truncatedDescription}</p>
               <p>Price: ¥{movie.price}/day</p>
               <p>Genre: {movie.genre.join(", ")}</p>
             </>
