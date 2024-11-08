@@ -69,33 +69,31 @@ export const sendEmailNotification = async (
 ) => {
   try {
     const template = getEmailTemplate(type, data);
+    const adminEmail = process.env.MAIL_FROM;
 
-    let recipient: string;
-    if (type === "new_application") {
-      const adminEmail = process.env.MAIL_FROM;
-      if (!adminEmail) {
-        throw new Error("Admin email not configured");
-      }
-      recipient = adminEmail;
-    } else if (type === "rental_confirmation" && data.userId) {
-      const user = await User.findById(data.userId);
-      if (!user?.email) {
-        throw new Error("User email not found");
-      }
-      recipient = user.email;
-    } else {
+    if (!adminEmail) {
+      throw new Error("Admin email not configured");
+    }
+
+    const recipient =
+      type === "new_application"
+        ? adminEmail
+        : type === "rental_confirmation" && data.userId
+        ? (await User.findById(data.userId))?.email
+        : null;
+
+    if (!recipient) {
       throw new Error("Invalid email type or missing recipient information");
     }
 
     const mailOptions = {
-      from: process.env.MAIL_FROM,
+      from: adminEmail,
       to: recipient,
       subject: template.subject,
       html: template.html,
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email sent successfully:", info.messageId);
     return true;
   } catch (error) {
     console.error("Failed to send email:", error);

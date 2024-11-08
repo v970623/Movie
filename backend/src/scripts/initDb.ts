@@ -15,6 +15,13 @@ const initializeDb = async () => {
       role: "public",
     });
     await user.save();
+    const staff = new User({
+      username: "staff",
+      email: "staff@example.com",
+      password: "123456",
+      role: "staff",
+    });
+    await staff.save();
 
     console.log("Database initialized successfully");
   } catch (error) {

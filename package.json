@@ -10,6 +10,7 @@
     "mongoose": "^8.7.3"
   },
   "scripts": {
-    "init-db": "ts-node backend/src/scripts/initMovies.ts"
+    "init-db": "ts-node backend/src/scripts/initDb.ts",
+    "init-movies": "ts-node backend/src/scripts/initMovies.ts"
   }
 }
